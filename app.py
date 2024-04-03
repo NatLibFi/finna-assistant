@@ -64,14 +64,7 @@ available_functions = {
     "search_library_records": search_library_records
 }
 
-chat_history = [
-    {
-        "role": "system",
-        "content": "You are an assistant designed to help users find information about library records."
-    }
-]
-
-def predict(message, history):
+def predict(message, chat_history):
     print("-----")
     chat_history.append({"role": "user", "content": message})
     response = client.chat.completions.create(
@@ -116,8 +109,49 @@ def predict(message, history):
             model="gpt-35-turbo-16k-0613",
             messages=chat_history,
         )
-        return second_response.choices[0].message.content
+        return {
+            "message": second_response.choices[0].message.content,
+            "chat_history": chat_history
+        }
     
-    return response.choices[0].message.content
+    return {
+        "message": response.choices[0].message.content,
+        "chat_history": chat_history
+    }
 
-gr.ChatInterface(predict).launch()
+with gr.Blocks() as app:
+    # Session state
+    chat_history_var = gr.State([
+        {
+            "role": "system",
+            "content": "You are an assistant designed to help users find information about library records."
+        }
+    ])
+
+    # UI components
+    chatbot = gr.Chatbot()
+    msg = gr.Textbox()
+    with gr.Row():
+        with gr.Column(scale=1):
+            clear = gr.ClearButton(components=[chat_history_var, msg, chatbot])
+        with gr.Column(scale=1):
+            btn = gr.Button(value="Submit", variant="primary")
+
+    # Function to be called on submit
+    def respond(message, chat_component_history, chat_history):
+        bot_response = predict(message, chat_history)
+
+        chat_component_history.append((message, bot_response["message"]))
+
+        return {
+            msg: "",
+            chatbot: chat_component_history,
+            chat_history_var: bot_response["chat_history"]
+        }
+
+    # Event listeners
+    msg.submit(respond, [msg, chatbot, chat_history_var], [msg, chatbot, chat_history_var])
+    btn.click(respond, [msg, chatbot, chat_history_var], [msg, chatbot, chat_history_var])
+
+if __name__ == "__main__":
+    app.launch()
