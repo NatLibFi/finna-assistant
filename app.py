@@ -12,7 +12,7 @@ client = AzureOpenAI(
 
 finna = finna_client.FinnaClient()
 
-def search_library_records(search_term, search_type="AllFields"):
+def search_library_records(search_term, search_type):
     print('search parameters:', search_term, search_type)
 
     results = finna.search(lookfor=search_term, type=finna_client.FinnaSearchType(search_type))
@@ -119,21 +119,21 @@ def predict(message, chat_history):
         "chat_history": chat_history
     }
 
+initial_chat_history = {
+    "role": "system",
+    "content": "You are an assistant designed to help users find information about library records."
+}
+
 with gr.Blocks() as app:
     # Session state
-    chat_history_var = gr.State([
-        {
-            "role": "system",
-            "content": "You are an assistant designed to help users find information about library records."
-        }
-    ])
+    chat_history_var = gr.State([initial_chat_history])
 
     # UI components
     chatbot = gr.Chatbot()
     msg = gr.Textbox()
     with gr.Row():
         with gr.Column(scale=1):
-            clear = gr.ClearButton(components=[chat_history_var, msg, chatbot])
+            clear = gr.ClearButton(components=[msg, chatbot])
         with gr.Column(scale=1):
             btn = gr.Button(value="Submit", variant="primary")
 
@@ -152,6 +152,7 @@ with gr.Blocks() as app:
     # Event listeners
     msg.submit(respond, [msg, chatbot, chat_history_var], [msg, chatbot, chat_history_var])
     btn.click(respond, [msg, chatbot, chat_history_var], [msg, chatbot, chat_history_var])
+    clear.click(lambda _: [initial_chat_history], [chat_history_var], [chat_history_var])
 
 if __name__ == "__main__":
     app.launch()
