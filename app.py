@@ -12,10 +12,29 @@ client = AzureOpenAI(
 
 finna = finna_client.FinnaClient()
 
-def search_library_records(search_term, search_type):
-    print('search parameters:', search_term, search_type)
+def search_library_records(search_term, search_type, formats, year_from, year_to, language):
+    print('search parameters:', search_term, search_type, formats, year_from, year_to, language)
 
-    results = finna.search(lookfor=search_term, type=finna_client.FinnaSearchType(search_type))
+    # Set format filter
+    if (type(formats) != list):
+        formats = [formats]
+    format_filter = ["~format:\"0/" + f + "/\"" for f in formats] if formats[0] else []
+
+    # Set date range filter
+    date_from = str(year_from) if year_from else "*"
+    date_to = str(year_to) if year_to else "*"
+    date_range_filter = "search_daterange_mv:\"[" + date_from + " TO " + date_to + "]\""
+    
+    # Set language filter
+    language_filter = "~language:\"" + language + "\"" if language else None
+    
+    filters = []
+    filters += format_filter
+    filters += [date_range_filter]
+    filters += [language_filter]
+    print(filters)
+
+    results = finna.search(lookfor=search_term, type=finna_client.FinnaSearchType(search_type), filters=filters)
     return json.dumps(results, indent=2)
 
 tools = [
@@ -23,17 +42,17 @@ tools = [
         "type": "function",
         "function": {
             "name": "search_library_records",
-            "description": "Search a library database for records (i.e. books, movies, etc) and their fields (i.e. authors, title, etc)",
+            "description": "Search a library database for records (i.e. books, movies, etc) and their fields (i.e. authors, title, etc).",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "search_term": {
                         "type": "string",
-                        "description": "The search term used to find information about the library records",
+                        "description": "The search term used to find information about the library records.",
                     },
                     "search_type": {
                         "type": "string",
-                        "description": "The type of search being done (e.g. title, authors, etc)",
+                        "description": "The type of field being searched (e.g. title, author, etc). Only use the options given.",
                         "enum": [
                             "AllFields",
                             "Title",
@@ -52,9 +71,59 @@ tools = [
                             "year",
                             "Holdings"
                         ]
+                    },
+                    "formats": {
+                        "type": "array",
+                        "description": "Array of format filters used to limit search results by record type. \
+                                        For example using [\"Book\", \"Image\"] to only search for books and images. \
+                                        You can use multiple filters at once. \
+                                        Only use the options given.",
+                        "items": {
+                            "type": "string",
+                            "description": "Record format type being filtered",
+                            "enum": [
+                                "Book",
+                                "Journal",
+                                "Document",
+                                "Image",
+                                "Thesis",
+                                "Sound",
+                                "PhysicalObject",
+                                "OtherText",
+                                "MusicalScore",
+                                "Video",
+                                "Other",
+                                "Map",
+                                "WorkOfArt",
+                                "Game",
+                                "Place",
+                                "LearningMaterial",
+                                "AIPA",
+                                "Unknown",
+                                "G1",
+                                "frågelistsvar",
+                                "offentliggjord inspelning"
+                            ]
+                        }
+                    },
+                    "year_from": {
+                        "type": "integer",
+                        "description": "First year of the date range the search is limited to. \
+                                        For example 2020 when searching for records published since 2020. \
+                                        Use negative numbers for years before the Common Era, for example -1000 for 1000BCE."
+                    },
+                    "year_to": {
+                        "type": "integer",
+                        "description": "First year of the date range the search is limited to. \
+                                        For example 2020 when searching for records published until 2020. \
+                                        Use negative numbers for years before the Common Era, for example -1000 for 1000BCE."
+                    },
+                    "language": {
+                        "type": "string",
+                        "description": "ISO 639-3 code for language of the records being searched. For example 'fin' for Finnish or 'deu' for German"
                     }
                 },
-                "required": ["search_term"],
+                "required": ["search_term", "search_type"],
             },
         },
     }
@@ -94,7 +163,11 @@ def predict(message, chat_history):
 
             function_response = function_to_call(
                 search_term=function_args.get("search_term"),
-                search_type=function_args.get("search_type")
+                search_type=function_args.get("search_type"),
+                formats=function_args.get("formats"),
+                year_from=function_args.get("year_from"),
+                year_to=function_args.get("year_to"),
+                language=function_args.get("language")
             )
 
             chat_history.append(
