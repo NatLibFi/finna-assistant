@@ -1,5 +1,5 @@
 import os
-from openai import AzureOpenAI
+from openai import AzureOpenAI, OpenAIError
 import gradio as gr
 import json
 import finna_client
@@ -212,7 +212,13 @@ with gr.Blocks() as app:
 
     # Function to be called on submit
     def respond(message, chat_component_history, chat_history):
-        bot_response = predict(message, chat_history)
+        bot_response = {}
+        try:
+            bot_response = predict(message, chat_history)
+        except OpenAIError as e:
+            print(e)
+            bot_response["message"] = "An error occured during execution:\n" + str(e)
+            bot_response["chat_history"] = [initial_chat_history]
 
         chat_component_history.append((message, bot_response["message"]))
 
