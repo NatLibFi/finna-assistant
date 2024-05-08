@@ -12,26 +12,28 @@ client = AzureOpenAI(
 
 finna = finna_client.FinnaClient()
 
-def search_library_records(search_term, search_type, formats, year_from, year_to, language):
-    print('search parameters:', search_term, search_type, formats, year_from, year_to, language)
+def search_library_records(search_term, search_type, formats, year_from, year_to, languages):
+    print('search parameters:', search_term, search_type, formats, year_from, year_to, languages)
 
     # Set format filter
     if (type(formats) != list):
         formats = [formats]
-    format_filter = ["~format:\"0/" + f + "/\"" for f in formats] if formats[0] else []
+    format_filter = ['~format:"0/' + f + '/"' for f in formats] if formats and formats[0] else []
 
     # Set date range filter
     date_from = str(year_from) if year_from else "*"
     date_to = str(year_to) if year_to else "*"
-    date_range_filter = "search_daterange_mv:\"[" + date_from + " TO " + date_to + "]\""
+    date_range_filter = 'search_daterange_mv:"[' + date_from + ' TO ' + date_to + ']"'
     
     # Set language filter
-    language_filter = "~language:\"" + language + "\"" if language else None
+    if (type(languages) != list):
+        languages = [languages]
+    language_filter = ['~language:"' + l + '"' for l in languages] if languages and languages[0] else []
     
     filters = []
     filters += format_filter
     filters += [date_range_filter]
-    filters += [language_filter]
+    filters += language_filter
     print(filters)
 
     results = finna.search(lookfor=search_term, type=finna_client.FinnaSearchType(search_type), filters=filters)
@@ -77,7 +79,7 @@ tools = [
                         "description": "Array of format filters used to limit search results by record type. \
                                         For example using [\"Book\", \"Image\"] to only search for books and images. \
                                         You can use multiple filters at once. \
-                                        Only use the options given.",
+                                        Only use the options given. Leave empty if no formats are specified.",
                         "items": {
                             "type": "string",
                             "description": "Record format type being filtered",
@@ -110,17 +112,27 @@ tools = [
                         "type": "integer",
                         "description": "First year of the date range the search is limited to. \
                                         For example 2020 when searching for records published since 2020. \
-                                        Use negative numbers for years before the Common Era, for example -1000 for 1000BCE."
+                                        Use negative numbers for years before the Common Era, for example -1000 for 1000BCE. \
+                                        Leave empty if no date range is specified."
                     },
                     "year_to": {
                         "type": "integer",
                         "description": "First year of the date range the search is limited to. \
                                         For example 2020 when searching for records published until 2020. \
-                                        Use negative numbers for years before the Common Era, for example -1000 for 1000BCE."
+                                        Use negative numbers for years before the Common Era, for example -1000 for 1000BCE. \
+                                        Leave empty if no date range is specified."
                     },
-                    "language": {
-                        "type": "string",
-                        "description": "ISO 639-3 code for language of the records being searched. For example 'fin' for Finnish or 'deu' for German"
+                    "languages": {
+                        "type": "array",
+                        "description": "Array of ISO 639-3 codes for the languages of the records being searched. \
+                                        For example ['fin', 'deu'] for Finnish and German. \
+                                        Leave empty if no languages are specified.",
+                        "items": {
+                            "type": "string",
+                            "description": "ISO 639-3 code for the language of the records being searched. \
+                                            For example 'fin' for Finnish or 'deu' for German. \
+                                            Leave empty if no languages are specified."
+                        }
                     }
                 },
                 "required": ["search_term", "search_type"],
@@ -167,7 +179,7 @@ def predict(message, chat_history):
                 formats=function_args.get("formats"),
                 year_from=function_args.get("year_from"),
                 year_to=function_args.get("year_to"),
-                language=function_args.get("language")
+                languages=function_args.get("languages")
             )
 
             chat_history.append(
