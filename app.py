@@ -13,7 +13,7 @@ client = AzureOpenAI(
 finna = finna_client.FinnaClient()
 
 def search_library_records(search_term, search_type, formats, year_from, year_to, languages):
-    print('search parameters:', search_term, search_type, formats, year_from, year_to, languages)
+    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages)
 
     # Set format filter
     if (type(formats) != list):
@@ -34,7 +34,7 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     filters += format_filter
     filters += [date_range_filter]
     filters += language_filter
-    print(filters)
+    print("filters:\n", filters)
 
     results = finna.search(lookfor=search_term, type=finna_client.FinnaSearchType(search_type), filters=filters)
     return json.dumps(results, indent=2)
@@ -147,6 +147,8 @@ available_functions = {
 
 def predict(message, chat_history):
     print("-----")
+    print("message:\n", message)
+
     chat_history.append({"role": "user", "content": message})
     response = client.chat.completions.create(
         model="gpt-35-turbo-16k-0613",
