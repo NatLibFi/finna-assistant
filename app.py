@@ -276,9 +276,9 @@ with gr.Blocks() as app:
         
         chat_component_history.append((message, bot_response["message"]))
 
-        if bot_response["search_parameters"]:
+        if bot_response.get("search_parameters"):
             parameter_message = f"Parameters used in search:\n \
-                                - Search term: `{bot_response['search_parameters']['search_term']}`\n \
+                                - Search term: `{bot_response['search_parameters']['search_term']} `\n \
                                 - Search type: `{bot_response['search_parameters']['search_type']}`\n \
                                 - Filters: `{bot_response['search_parameters']['filters']}`\n \
                                 - Sort method: `{bot_response['search_parameters']['sort_method']}`"
