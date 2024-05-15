@@ -256,7 +256,7 @@ with gr.Blocks() as app:
     chat_history_var = gr.State([initial_chat_history])
 
     # UI components
-    chatbot = gr.Chatbot()
+    chatbot = gr.Chatbot(height="calc(100vh - 200px)")
     msg = gr.Textbox()
     with gr.Row():
         with gr.Column(scale=1):
