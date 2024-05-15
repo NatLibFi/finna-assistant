@@ -42,6 +42,13 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
         sort_method = "relevance,id asc"
     
     results = finna.search(lookfor=search_term, type=finna_client.FinnaSearchType(search_type), filters=filters, sort=finna_client.FinnaSortMethod(sort_method))
+    results["search_parameters"] = {
+        "search_term": search_term,
+        "search_type": search_type,
+        "filters": filters,
+        "sort_method": sort_method
+    }
+    
     return json.dumps(results, indent=2)
 
 tools = [
@@ -193,6 +200,8 @@ def predict(message, chat_history):
 
     print("response:\n", response_message)
 
+    search_parameters = {}
+
     tool_calls = response_message.tool_calls
     if tool_calls:
         for tool_call in tool_calls:
@@ -210,6 +219,8 @@ def predict(message, chat_history):
                 sort_method=function_args.get("sort_method")
             )
 
+            search_parameters = json.loads(function_response)["search_parameters"]
+
             chat_history.append(
                 {
                     "tool_call_id": tool_call.id,
@@ -224,12 +235,14 @@ def predict(message, chat_history):
         )
         return {
             "message": second_response.choices[0].message.content,
-            "chat_history": chat_history
+            "chat_history": chat_history,
+            "search_parameters": search_parameters
         }
     
     return {
         "message": response.choices[0].message.content,
-        "chat_history": chat_history
+        "chat_history": chat_history,
+        "search_parameters": search_parameters
     }
 
 initial_chat_history = {
@@ -260,8 +273,16 @@ with gr.Blocks() as app:
             print(e)
             bot_response["message"] = "An error occured during execution:\n" + str(e)
             bot_response["chat_history"] = [initial_chat_history]
-
+        
         chat_component_history.append((message, bot_response["message"]))
+
+        if bot_response["search_parameters"]:
+            parameter_message = f"Parameters used in search:\n \
+                                - Search term: `{bot_response['search_parameters']['search_term']}`\n \
+                                - Search type: `{bot_response['search_parameters']['search_type']}`\n \
+                                - Filters: `{bot_response['search_parameters']['filters']}`\n \
+                                - Sort method: `{bot_response['search_parameters']['sort_method']}`"
+            chat_component_history.append((None, parameter_message))
 
         return {
             msg: "",
