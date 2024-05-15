@@ -183,7 +183,7 @@ def predict(message, chat_history):
 
     chat_history.append({"role": "user", "content": message})
     response = client.chat.completions.create(
-        model="gpt-35-turbo-16k-0613",
+        model="gpt-35-turbo-1106",
         messages=chat_history,
         tools=tools,
         tool_choice="auto",
@@ -230,7 +230,7 @@ def predict(message, chat_history):
                 }
             )
         second_response = client.chat.completions.create(
-            model="gpt-35-turbo-16k-0613",
+            model="gpt-35-turbo-1106",
             messages=chat_history,
         )
         return {
