@@ -2,7 +2,7 @@ import os
 from openai import AzureOpenAI, OpenAIError
 import gradio as gr
 import json
-import finna_client
+import requests
 
 client = AzureOpenAI(
   azure_endpoint="https://finna-ai-test.openai.azure.com/",
@@ -10,7 +10,7 @@ client = AzureOpenAI(
   api_version="2024-02-15-preview"
 )
 
-finna = finna_client.FinnaClient()
+finna_api_base_url = "https://api.finna.fi/api/v1/"
 
 def search_library_records(search_term, search_type, formats, year_from, year_to, languages, sort_method):
     print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, sort_method)
@@ -37,11 +37,15 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     filters += language_filter
     print("filters:\n", filters)
 
-    #set sort method
+    # Set sort method
     if not sort_method:
         sort_method = "relevance,id asc"
+
+    # Make HTTP request to search API
+    req = requests.get(finna_api_base_url + 'search', params={"lookfor": search_term, "type": search_type, "filters[]": filters, "sort": sort_method})
+    req.raise_for_status()
     
-    results = finna.search(lookfor=search_term, type=finna_client.FinnaSearchType(search_type), filters=filters, sort=finna_client.FinnaSortMethod(sort_method))
+    results = req.json()
     results["search_parameters"] = {
         "search_term": search_term,
         "search_type": search_type,
