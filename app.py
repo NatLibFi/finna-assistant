@@ -1,5 +1,5 @@
 import os
-from openai import AzureOpenAI, OpenAIError
+from openai import AzureOpenAI
 import gradio as gr
 import json
 import requests
@@ -273,7 +273,7 @@ with gr.Blocks() as app:
         bot_response = {}
         try:
             bot_response = predict(message, chat_history)
-        except OpenAIError as e:
+        except Exception as e:
             print(e)
             bot_response["message"] = "An error occured during execution:\n" + str(e)
             bot_response["chat_history"] = [initial_chat_history]
