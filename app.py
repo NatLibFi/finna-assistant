@@ -41,7 +41,7 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     if not sort_method:
         sort_method = "relevance,id asc"
 
-    # Make HTTP request to search API
+    # Make HTTP request to Finna search API
     req = requests.get(finna_api_base_url + 'search', params={"lookfor": search_term, "type": search_type, "filters[]": filters, "sort": sort_method})
     req.raise_for_status()
     
@@ -50,7 +50,8 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
         "search_term": search_term,
         "search_type": search_type,
         "filters": filters,
-        "sort_method": sort_method
+        "sort_method": sort_method,
+        "search_url": req.url
     }
     
     return json.dumps(results, indent=2)
@@ -285,7 +286,8 @@ with gr.Blocks() as app:
                                 - Search term: `{bot_response['search_parameters']['search_term']} `\n \
                                 - Search type: `{bot_response['search_parameters']['search_type']}`\n \
                                 - Filters: `{bot_response['search_parameters']['filters']}`\n \
-                                - Sort method: `{bot_response['search_parameters']['sort_method']}`"
+                                - Sort method: `{bot_response['search_parameters']['sort_method']}`\n\n \
+                                Search results can be seen here: {bot_response['search_parameters']['search_url']}"
             chat_component_history.append((None, parameter_message))
 
         return {
