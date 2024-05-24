@@ -12,8 +12,8 @@ client = AzureOpenAI(
 
 finna_api_base_url = "https://api.finna.fi/api/v1/"
 
-def search_library_records(search_term, search_type, formats, year_from, year_to, languages, sort_method):
-    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, sort_method)
+def search_library_records(search_term, search_type, formats, year_from, year_to, languages, sort_method, prompt_lng):
+    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, sort_method, prompt_lng)
 
     # Set format filter
     if (type(formats) != list):
@@ -41,8 +41,12 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     if not sort_method:
         sort_method = "relevance,id asc"
 
+    # Set search query language based on prompt language
+    if not prompt_lng in ["fi", "sv", "en-gb"]:
+        prompt_lng = "fi"
+
     # Make HTTP request to Finna search API
-    req = requests.get(finna_api_base_url + 'search', params={"lookfor": search_term, "type": search_type, "filters[]": filters, "sort": sort_method})
+    req = requests.get(finna_api_base_url + 'search', params={"lookfor0[]": search_term, "type0[]": search_type, "filter[]": filters, "sort": sort_method, "lng": prompt_lng})
     req.raise_for_status()
     
     results = req.json()
@@ -170,6 +174,16 @@ tools = [
                             "title",
                             "last_indexed desc,id asc"
                         ]
+                    },
+                    "prompt_lng": {
+                        "type": "string",
+                        "description": "Language of the prompt from the user. \"fi\" for Finnish, \"sv\" for Swedish and \"en-gb\" for English. \
+                                        If the prompt is not in Finnish, Swedish or English, use Finnish. For example, if the prompt is in German, use \"fi\". Only use the options given.",
+                        "enum": [
+                            "fi",
+                            "sv",
+                            "en-gb"
+                        ]
                     }
                 },
                 "required": ["search_term", "search_type"],
@@ -221,7 +235,8 @@ def predict(message, chat_history):
                 year_from=function_args.get("year_from"),
                 year_to=function_args.get("year_to"),
                 languages=function_args.get("languages"),
-                sort_method=function_args.get("sort_method")
+                sort_method=function_args.get("sort_method"),
+                prompt_lng=function_args.get("prompt_lng")
             )
 
             search_parameters = json.loads(function_response)["search_parameters"]
