@@ -267,7 +267,8 @@ def predict(message, chat_history):
 
 initial_chat_history = {
     "role": "system",
-    "content": read_system_prompt()
+    "content": "You are an assistant designed to help users find information about library records. \
+                Always show the URL for all records in the format: [Katso tietue Finnassa](https://finna.fi/Record/<record-id>)."
 }
 
 with gr.Blocks() as app:
