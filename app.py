@@ -267,8 +267,7 @@ def predict(message, chat_history):
 
 initial_chat_history = {
     "role": "system",
-    "content": "You are an assistant designed to help users find information about library records. \
-                Always show the URL for all records in the format: [Katso tietue Finnassa](https://finna.fi/Record/<record-id>)."
+    "content": read_system_prompt()
 }
 
 with gr.Blocks() as app:
@@ -302,7 +301,7 @@ with gr.Blocks() as app:
                                 - Search type: `{bot_response['search_parameters']['search_type']}`\n \
                                 - Filters: `{bot_response['search_parameters']['filters']}`\n \
                                 - Sort method: `{bot_response['search_parameters']['sort_method']}`\n\n \
-                                Search results can be seen here: {bot_response['search_parameters']['search_url']}"
+                                Search results can be seen here: https://www.finna.fi/Search/Results?{bot_response['search_parameters']['search_url'].split('?',1)[1]}"
             chat_component_history.append((None, parameter_message))
 
         return {
