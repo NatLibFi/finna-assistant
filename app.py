@@ -12,8 +12,8 @@ client = AzureOpenAI(
 
 finna_api_base_url = "https://api.finna.fi/api/v1/"
 
-def search_library_records(search_term, search_type, formats, year_from, year_to, languages, sort_method, prompt_lng):
-    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, sort_method, prompt_lng)
+def search_library_records(search_term, search_type, formats, year_from, year_to, languages, sort_method, prompt_lng, limit):
+    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, sort_method, prompt_lng, limit)
 
     # Set format filter
     if (type(formats) != list):
@@ -45,8 +45,11 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     if not prompt_lng in ["fi", "sv", "en-gb"]:
         prompt_lng = "fi"
 
+    # Set limit
+    limit = 10 if not limit else limit
+
     # Make HTTP request to Finna search API
-    req = requests.get(finna_api_base_url + 'search', params={"lookfor0[]": search_term, "type0[]": search_type, "filter[]": filters, "sort": sort_method, "lng": prompt_lng})
+    req = requests.get(finna_api_base_url + 'search', params={"lookfor0[]": search_term, "type0[]": search_type, "filter[]": filters, "sort": sort_method, "lng": prompt_lng, "limit": limit})
     req.raise_for_status()
     
     results = req.json()
@@ -128,7 +131,6 @@ tools = [
                                 "LearningMaterial",
                                 "AIPA",
                                 "Unknown",
-                                "G1",
                                 "frågelistsvar",
                                 "offentliggjord inspelning"
                             ]
@@ -184,9 +186,13 @@ tools = [
                             "sv",
                             "en-gb"
                         ]
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of records to return. Leave empty if no number is specified in user prompt."
                     }
                 },
-                "required": ["search_term", "search_type"],
+                "required": ["prompt_lng"],
             },
         },
     }
@@ -236,7 +242,8 @@ def predict(message, chat_history):
                 year_to=function_args.get("year_to"),
                 languages=function_args.get("languages"),
                 sort_method=function_args.get("sort_method"),
-                prompt_lng=function_args.get("prompt_lng")
+                prompt_lng=function_args.get("prompt_lng"),
+                limit=function_args.get("limit")
             )
 
             search_parameters = json.loads(function_response)["search_parameters"]
@@ -265,10 +272,14 @@ def predict(message, chat_history):
         "search_parameters": search_parameters
     }
 
+def read_system_prompt():
+    with open("system_prompt.md", "r") as f:
+        output = f.read()
+        return output
+
 initial_chat_history = {
     "role": "system",
-    "content": "You are an assistant designed to help users find information about library records. \
-                Always show the URL for all records in the format: [Katso tietue Finnassa](https://finna.fi/Record/<record-id>)."
+    "content": read_system_prompt()
 }
 
 with gr.Blocks() as app:
@@ -291,7 +302,7 @@ with gr.Blocks() as app:
             bot_response = predict(message, chat_history)
         except Exception as e:
             print(e)
-            bot_response["message"] = "An error occured during execution:\n" + str(e)
+            bot_response["message"] = "An error occurred during execution:\n" + str(e)
             bot_response["chat_history"] = [initial_chat_history]
         
         chat_component_history.append((message, bot_response["message"]))
