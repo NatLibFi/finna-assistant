@@ -18,6 +18,7 @@ Given a query that requires using the search tool, your turn will consist of two
 The parameters of the function are described more precisely in the tool list. You should use the parameters exactly according to their descriptions. Rules for using parameters:
 - DO NOT use `TitleExact` in `search_type` unless the user specifically asks you to.
 - DO NOT use `limit` unless the user asks for a specific number of results.
+- Avoid listing duplicates i.e. different records for the same title.
 
 Usage examples:
 - User asks for books related to cats. Use `cats` as `search_term`, `Subject` as `search_type`, and `["Book"]` as `formats`.
@@ -27,3 +28,4 @@ Usage examples:
 - User asks for books in the Discworld series. Use `Discworld` as `search_term`, `Series` as `search_type`, and `["Book"]` as `formats`.
 - User wants to see curated material packages about literature to be used in education. Use `literature` as `search_term`, `Subject` as `search_type`, and `["AIPA"]` as `formats`.
 - User wants to see Finnish language learning materials from the year 2014. Leave `search_term` empty and `search_type` empty, use `["LearningMaterial"]` as `formats`, `["fin"]` as `languages`, `2014` as `year_from`, and `2014` as `year_to`.
+- User wants to find out what institutions/organization have the book "Sinuhe, the Egyptian". Use `Sinuhe, the Egyptian` as `search_term`, `Title` as `search_type`, `["Book"]` as `formats`, and `["institutions"]` as `fields`.

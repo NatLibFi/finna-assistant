@@ -12,8 +12,8 @@ client = AzureOpenAI(
 
 finna_api_base_url = "https://api.finna.fi/api/v1/"
 
-def search_library_records(search_term, search_type, formats, year_from, year_to, languages, sort_method, prompt_lng, limit):
-    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, sort_method, prompt_lng, limit)
+def search_library_records(search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit):
+    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit)
 
     # Set format filter
     if (type(formats) != list):
@@ -37,6 +37,25 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     filters += language_filter
     print("filters:\n", filters)
 
+    # Set fields to be returned
+    fields += [
+        "buildings",
+        "formats",
+        "id",
+        "imageRights",
+        "images",
+        "languages",
+        "nonPresenterAuthors",
+        "onlineUrls",
+        "presenters",
+        "rating",
+        "series",
+        "subjects",
+        "title",
+        "urls",
+        "year",
+    ]
+
     # Set sort method
     if not sort_method:
         sort_method = "relevance,id asc"
@@ -45,11 +64,11 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     if not prompt_lng in ["fi", "sv", "en-gb"]:
         prompt_lng = "fi"
 
-    # Set limit
-    limit = 10 if not limit else limit
+    # Set limit to 10 if it was not set before
+    limit = limit or 10
 
     # Make HTTP request to Finna search API
-    req = requests.get(finna_api_base_url + 'search', params={"lookfor0[]": search_term, "type0[]": search_type, "filter[]": filters, "sort": sort_method, "lng": prompt_lng, "limit": limit})
+    req = requests.get(finna_api_base_url + 'search', params={"lookfor0[]": search_term, "type0[]": search_type, "filter[]": filters, "field[]": fields, "sort": sort_method, "lng": prompt_lng, "limit": limit})
     req.raise_for_status()
     
     results = req.json()
@@ -57,7 +76,9 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
         "search_term": search_term,
         "search_type": search_type,
         "filters": filters,
+        "fields": fields,
         "sort_method": sort_method,
+        "limit": limit,
         "search_url": req.url
     }
     
@@ -162,6 +183,38 @@ tools = [
                                             Leave empty if no languages are specified."
                         }
                     },
+                    "fields": {
+                        "type": "array",
+                        "description": "List of record fields to return in addition to default fields. \
+                                        For example, [\"institutions\"] to see the organizations that hold the records. \
+                                        You can specify multiple fields at once. \
+                                        Only use the options given. Leave empty if no fields are specified.",
+                        "items": {
+                            "type": "string",
+                            "description": "Field to be returned.",
+                            "enum": [
+                                "alternativeTitles",
+                                "awards",
+                                "buildings",
+                                "callNumbers",
+                                "classifications",
+                                "collections",
+                                "edition",
+                                "formats",
+                                "genres",
+                                "imageRights",
+                                "institutions",
+                                "languages",
+                                "originalLanguages",
+                                "placesOfPublication",
+                                "publishers",
+                                "rating",
+                                "series",
+                                "summary",
+                                "toc"
+                            ]
+                        }
+                    },
                     "sort_method": {
                         "type": "string",
                         "description": "The method used to sort search results. \
@@ -189,7 +242,7 @@ tools = [
                     },
                     "limit": {
                         "type": "integer",
-                        "description": "Number of records to return. Leave empty if no number is specified in user prompt."
+                        "description": "Number of records to return. Leave empty if no number is specified in user prompt. Default is 10. "
                     }
                 },
                 "required": ["prompt_lng"],
@@ -241,6 +294,7 @@ def predict(message, chat_history):
                 year_from=function_args.get("year_from"),
                 year_to=function_args.get("year_to"),
                 languages=function_args.get("languages"),
+                fields=function_args.get("fields"),
                 sort_method=function_args.get("sort_method"),
                 prompt_lng=function_args.get("prompt_lng"),
                 limit=function_args.get("limit")
