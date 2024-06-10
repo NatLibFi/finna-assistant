@@ -16,7 +16,7 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit)
 
     # Set format filter
-    if (type(formats) != list):
+    if type(formats) != list:
         formats = [formats]
     format_filter = ['~format:"0/' + f + '/"' for f in formats] if formats and formats[0] else []
 
@@ -26,7 +26,7 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     date_range_filter = ['search_daterange_mv:"[' + date_from + ' TO ' + date_to + ']"']
     
     # Set language filter
-    if (type(languages) != list):
+    if type(languages) != list:
         languages = [languages]
     language_filter = ['~language:"' + l + '"' for l in languages] if languages and languages[0] else []
     
@@ -38,6 +38,8 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     print("filters:\n", filters)
 
     # Set fields to be returned
+    if type(fields) != list:
+        fields = [fields] 
     fields += [
         "buildings",
         "formats",
