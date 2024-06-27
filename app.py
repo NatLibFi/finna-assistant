@@ -3,17 +3,29 @@ from openai import AzureOpenAI
 import gradio as gr
 import json
 import requests
+import pandas as pd
+import numpy as np
 
 client = AzureOpenAI(
   azure_endpoint="https://finna-ai-test.openai.azure.com/",
-  api_key=os.getenv("AZURE_OPENAI_KEY"),  
+  api_key=os.getenv("AZURE_OPENAI_KEY"),
   api_version="2024-02-15-preview"
 )
 
 finna_api_base_url = "https://api.finna.fi/api/v1/"
 
-def search_library_records(search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit):
-    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit)
+def get_organization_code(organization):
+    # Read embeddings for organization names from file
+    df = pd.read_pickle("organizations_embeddings.pkl")
+    # Get an embedding for the organization being searched
+    embedding = client.embeddings.create(input=organization, model="text-embedding-ada-002").data[0].embedding
+    # Compare embeddings using cosine similarity
+    df["similarities"] = df["embedding"].apply(lambda x: np.dot(x, embedding) / (np.linalg.norm(x) * np.linalg.norm(embedding)))
+    # Return organization code of the most similar embedding
+    return df.loc[df["similarities"].idxmax(), "value"]
+
+def search_library_records(search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit, organizations):
+    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit, organizations)
 
     # Set format filter
     if type(formats) != list:
@@ -29,12 +41,18 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     if type(languages) != list:
         languages = [languages]
     language_filter = ['~language:"' + l + '"' for l in languages] if languages and languages[0] else []
+
+    # Set building filter
+    if type(organizations) != list:
+        organizations = [organizations]
+    building_filter = ['~building:"' + get_organization_code(o) + '"' for o in organizations] if organizations[0] else []
     
     # Set filters
     filters = []
     filters += format_filter
     filters += date_range_filter
     filters += language_filter
+    filters += building_filter
     print("filters:\n", filters)
 
     # Set fields to be returned
@@ -60,7 +78,7 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
 
     # Set sort method
     if not sort_method:
-        sort_method = "relevance,id asc"
+        sort_method = "relevance"
 
     # Set search query language based on prompt language
     if not prompt_lng in ["fi", "sv", "en-gb"]:
@@ -185,10 +203,21 @@ tools = [
                                             Leave empty if no languages are specified."
                         }
                     },
+                    "organizations": {
+                        "type": "array",
+                        "description": "Names of organizations where the records are available. \
+                                        For example [\"The National Library\", \"Åbo Akademi Library\"] when the user asks what records are available at the National Library and at Åbo Akademi Library. \
+                                        DO NOT guess what the user meant, just use the name given in the prompt. \
+                                        You can use multiple organizations at once. Leave empty if no organization is specified in the prompt.",
+                        "items": {
+                            "type": "string",
+                            "description": "The name of the organization whose records are being searched."
+                        }
+                    },
                     "fields": {
                         "type": "array",
                         "description": "List of record fields to return in addition to default fields. \
-                                        For example, [\"institutions\"] to see the organizations that hold the records. \
+                                        For example, [\"institutions\"] to see the organizations that hold the records or [\"physicalDescriptions\"] to see the number of pages of a book. \
                                         You can specify multiple fields at once. \
                                         Only use the options given. Leave empty if no fields are specified.",
                         "items": {
@@ -202,16 +231,15 @@ tools = [
                                 "classifications",
                                 "collections",
                                 "edition",
-                                "formats",
                                 "genres",
                                 "imageRights",
                                 "institutions",
-                                "languages",
+                                "isbn",
                                 "originalLanguages",
+                                "physicalDescriptions",
                                 "placesOfPublication",
                                 "publishers",
                                 "rating",
-                                "series",
                                 "summary",
                                 "toc"
                             ]
@@ -223,13 +251,13 @@ tools = [
                                         For example, \"main_date_str desc\" to sort results by year in a descending order. \
                                         Only use the options given.",
                         "enum": [
-                            "relevance,id asc",
+                            "relevance",
                             "main_date_str desc",
                             "main_date_str asc",
                             "callnumber",
                             "author",
                             "title",
-                            "last_indexed desc,id asc"
+                            "last_indexed desc"
                         ]
                     },
                     "prompt_lng": {
@@ -245,7 +273,7 @@ tools = [
                     "limit": {
                         "type": "integer",
                         "description": "Number of records to return. Leave empty if no number is specified in user prompt. Default is 10. "
-                    }
+                    },
                 },
                 "required": ["prompt_lng"],
             },
@@ -299,7 +327,8 @@ def predict(message, chat_history):
                 fields=function_args.get("fields"),
                 sort_method=function_args.get("sort_method"),
                 prompt_lng=function_args.get("prompt_lng"),
-                limit=function_args.get("limit")
+                limit=function_args.get("limit"),
+                organizations=function_args.get("organizations")
             )
 
             search_parameters = json.loads(function_response)["search_parameters"]
