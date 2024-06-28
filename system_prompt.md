@@ -38,12 +38,13 @@ Use the examples below to make calls to the `search_library_records` function. G
         - `search_type`: "Subject"
         - `formats`: ["Book"]
         - `prompt_lng`: "en-gb"
-2. Example 2 Searching for magazines based on subject
-    - Query: What magazines are there about cars and sports?
+2. Example 2 Searching for magazines based on subject and online availability
+    - Query: What magazines are there about cars and sports that can be read online?
     - Parameters:
         - `search_term`: "cas AND sports"
         - `search_type`: "Subject"
         - `formats`: ["Journal"]
+        - `available_online`: True
         - `prompt_lng`: "en-gb"
 3. Example 3 Searching for photos based on location and time period
     - Query: Show me photos from the 1900s that were taken in Helsinki or in Espoo
@@ -98,7 +99,7 @@ Use the examples below to make calls to the `search_library_records` function. G
         - `formats`: ["Game"]
         - `organizations`: ["Helka", "Helmet"]
         - `prompt_lng`: "en-gb"
-9. Example 9 Searching for articles about a person in a news paper
+9. Example 9 Searching for articles about a person in a newspaper
     - Query: What articles have been released on Paavo Lipponen in Helsingin Sanomat?
     - Parameters:
         - `search_term`: "Paavo Lipponen"

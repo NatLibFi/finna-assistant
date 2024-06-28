@@ -24,8 +24,8 @@ def get_most_similar_embedding(file, text):
     # Return value of the most similar embedding
     return df.loc[df["similarities"].idxmax(), "value"]
 
-def search_library_records(search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit, organizations, journals):
-    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit, organizations, journals)
+def search_library_records(search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit, organizations, journals, available_online):
+    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit, organizations, journals, available_online)
 
     # Set format filter
     if type(formats) != list:
@@ -52,6 +52,9 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
         journals = [journals]
     hierarchy_filter = ['~hierarchy_parent_title:"' + get_most_similar_embedding("journals_embeddings.pkl", j) + '"' for j in journals] if journals[0] else []
     
+    # Set online filter
+    online_filter = ['free_online_boolean:"1"'] if available_online else []
+    
     # Set filters
     filters = []
     filters += format_filter
@@ -59,6 +62,7 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     filters += language_filter
     filters += building_filter
     filters += hierarchy_filter
+    filters += online_filter
     print("filters:\n", filters)
 
     # Set fields to be returned
@@ -287,6 +291,12 @@ tools = [
                             "en-gb"
                         ]
                     },
+                    "available_online": {
+                        "type": "boolean",
+                        "description": "Boolean that determines whether the search results are available online. \
+                                        When set to True, the search will exclusively return records that are available online. \
+                                        If set to False, the results will include records both available and unavailable online."
+                    },
                     "limit": {
                         "type": "integer",
                         "description": "Number of records to return. Leave empty if no number is specified in user prompt. Default is 10. "
@@ -346,7 +356,8 @@ def predict(message, chat_history):
                 prompt_lng=function_args.get("prompt_lng"),
                 limit=function_args.get("limit"),
                 organizations=function_args.get("organizations"),
-                journals=function_args.get("journals")
+                journals=function_args.get("journals"),
+                available_online=function_args.get("available_online")
             )
 
             search_parameters = json.loads(function_response)["search_parameters"]
