@@ -14,18 +14,18 @@ client = AzureOpenAI(
 
 finna_api_base_url = "https://api.finna.fi/api/v1/"
 
-def get_organization_code(organization):
-    # Read embeddings for organization names from file
-    df = pd.read_pickle("organizations_embeddings.pkl")
-    # Get an embedding for the organization being searched
-    embedding = client.embeddings.create(input=organization, model="text-embedding-ada-002").data[0].embedding
+def get_most_similar_embedding(file, text):
+    # Read embeddings from file
+    df = pd.read_pickle(file)
+    # Get an embedding for the given text
+    embedding = client.embeddings.create(input=text, model="text-embedding-ada-002").data[0].embedding
     # Compare embeddings using cosine similarity
     df["similarities"] = df["embedding"].apply(lambda x: np.dot(x, embedding) / (np.linalg.norm(x) * np.linalg.norm(embedding)))
-    # Return organization code of the most similar embedding
+    # Return value of the most similar embedding
     return df.loc[df["similarities"].idxmax(), "value"]
 
-def search_library_records(search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit, organizations):
-    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit, organizations)
+def search_library_records(search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit, organizations, journals):
+    print('search parameters:\n', search_term, search_type, formats, year_from, year_to, languages, fields, sort_method, prompt_lng, limit, organizations, journals)
 
     # Set format filter
     if type(formats) != list:
@@ -45,7 +45,12 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     # Set building filter
     if type(organizations) != list:
         organizations = [organizations]
-    building_filter = ['~building:"' + get_organization_code(o) + '"' for o in organizations] if organizations[0] else []
+    building_filter = ['~building:"' + get_most_similar_embedding("organizations_embeddings.pkl", o) + '"' for o in organizations] if organizations[0] else []
+
+    # Set hierarchy filter
+    if type(journals) != list:
+        journals = [journals]
+    hierarchy_filter = ['~hierarchy_parent_title:"' + get_most_similar_embedding("journals_embeddings.pkl", j) + '"' for j in journals] if journals[0] else []
     
     # Set filters
     filters = []
@@ -53,6 +58,7 @@ def search_library_records(search_term, search_type, formats, year_from, year_to
     filters += date_range_filter
     filters += language_filter
     filters += building_filter
+    filters += hierarchy_filter
     print("filters:\n", filters)
 
     # Set fields to be returned
@@ -205,13 +211,24 @@ tools = [
                     },
                     "organizations": {
                         "type": "array",
-                        "description": "Names of organizations where the records are available. \
+                        "description": "Array of the names of organizations where the records are available. \
                                         For example [\"The National Library\", \"Åbo Akademi Library\"] when the user asks what records are available at the National Library and at Åbo Akademi Library. \
                                         DO NOT guess what the user meant, just use the name given in the prompt. \
                                         You can use multiple organizations at once. Leave empty if no organization is specified in the prompt.",
                         "items": {
                             "type": "string",
                             "description": "The name of the organization whose records are being searched."
+                        }
+                    },
+                    "journals": {
+                        "type": "array",
+                        "description": "Array of the names of journals in which articles are published. \
+                                        For example [\"Helsingin Sanomat\", \"Turun Sanomat\"] when the user is searching for articles published in Helsingin Sanomat and in Turun Sanomat. \
+                                        DO NOT guess what the user meant, just use the name given in the prompt. \
+                                        You can use multiple journals at once. Leave empty if no journal is specified in the prompt.",
+                        "items": {
+                            "type": "string",
+                            "description": "The name of the journal whose articles are being searched."
                         }
                     },
                     "fields": {
@@ -328,7 +345,8 @@ def predict(message, chat_history):
                 sort_method=function_args.get("sort_method"),
                 prompt_lng=function_args.get("prompt_lng"),
                 limit=function_args.get("limit"),
-                organizations=function_args.get("organizations")
+                organizations=function_args.get("organizations"),
+                journals=function_args.get("journals")
             )
 
             search_parameters = json.loads(function_response)["search_parameters"]

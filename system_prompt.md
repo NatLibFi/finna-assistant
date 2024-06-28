@@ -98,10 +98,11 @@ Use the examples below to make calls to the `search_library_records` function. G
         - `formats`: ["Game"]
         - `organizations`: ["Helka", "Helmet"]
         - `prompt_lng`: "en-gb"
-9. Example 9 Searching for articles on a person
-    - Query: What articles have been released on Paavo Lipponen?
+9. Example 9 Searching for articles about a person in a news paper
+    - Query: What articles have been released on Paavo Lipponen in Helsingin Sanomat?
     - Parameters:
         - `search_term`: "Paavo Lipponen"
         - `search_type`: ["Subject"]
         - `formats`: ["Journal"]
+        - `Journals`: ["Helsingin Sanomat"]
         - `prompt_lng`: "en-gb"

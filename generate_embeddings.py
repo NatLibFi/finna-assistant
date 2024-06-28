@@ -12,9 +12,15 @@ def get_embedding(text):
     return client.embeddings.create(input=text, model="text-embedding-ada-002").data[0].embedding
 
 # Read organizations from file
-df = pd.read_csv("organizations.csv", delimiter=";")
+df_o = pd.read_csv("organizations.csv", delimiter=";")
 # Get embeddings for organization names
-df["embedding"] = df["translated"].apply(lambda x: get_embedding(x))
+df_o["embedding"] = df_o["translated"].apply(lambda x: get_embedding(x))
 
-# Save organizations and their embeddings to a .pkl file
-df.to_pickle("organizations_embeddings.pkl")
+# Read journals from file
+df_j = pd.read_csv("journals.csv")
+# Get embeddings for journal names
+df_j["embedding"] = df_j["value"].apply(lambda x: get_embedding(x))
+
+# Save embeddings to .pkl files
+df_o.to_pickle("organizations_embeddings.pkl")
+df_j.to_pickle("journals_embeddings.pkl")

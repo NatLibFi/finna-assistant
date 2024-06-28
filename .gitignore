@@ -1,5 +1,6 @@
 # Embedding file
 organizations_embeddings.pkl
+journals_embeddings.pkl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
