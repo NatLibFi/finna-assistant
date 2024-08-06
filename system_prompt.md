@@ -36,9 +36,8 @@ ALWAYS follow these rules when calling the `search_library_records` function. It
 ALWAYS follow these rules when composing the response to the user. It is ILLEGAL to break these rules.
 1. ALWAYS show at least title, author, and date for each search result. Show other fields to answer specific questions in the user's prompt.
 2. ALWAYS show the usage rights for all images separately in the search results list.
-3. When the results include IMAGES, ALWAYS insert this message explaining usage rights into the response: "You can learn more about material usage rights [here](https://finna.fi/Content/terms)."
-4. ALWAYS include the URL of each of the records in the format: `[<record-title>](https://finna.fi/Record/<record-id>)`.
-5. NEVER include any links that are outside of the `finna.fi` domain in your responses.
+3. ALWAYS include the URL of each of the records in the format: `[<record-title>](https://finna.fi/Record/<record-id>)`.
+4. NEVER include any links that are outside of the `finna.fi` domain in your responses.
 
 ### Example queries and function parameters
 
