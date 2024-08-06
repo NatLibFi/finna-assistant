@@ -35,47 +35,47 @@ def get_most_similar_embedding(file, text):
     return df.loc[df["similarities"].idxmax(), "value"]
 
 def search_library_records(**kwargs):
-    print('search parameters:\n', json.dumps(kwargs, indent=2))
+    print("search parameters:\n", json.dumps(kwargs, indent=2))
 
     # Set search terms and types
-    search_terms = kwargs['search_terms']
+    search_terms = kwargs["search_terms"]
     lookfor = [t["search_term"] for t in search_terms] if search_terms else None
     types = [t["search_type"] for t in search_terms] if search_terms else None
 
     # Set search bool
-    search_bool = kwargs['search_bool'] or 'AND'
+    search_bool = kwargs["search_bool"] or 'AND'
 
     # Set format filter
-    formats = kwargs['formats']
+    formats = kwargs["formats"]
     if type(formats) != list:
         formats = [formats]
     format_filter = ['~format:"0/' + f + '/"' for f in formats] if formats and formats[0] else []
 
     # Set date range filter
-    date_from = str(kwargs['year_from']) if kwargs['year_from'] else "*"
-    date_to = str(kwargs['year_to']) if kwargs['year_to'] else "*"
+    date_from = str(kwargs["year_from"]) if kwargs["year_from"] else "*"
+    date_to = str(kwargs["year_to"]) if kwargs["year_to"] else "*"
     date_range_filter = ['search_daterange_mv:"[' + date_from + ' TO ' + date_to + ']"']
     
     # Set language filter
-    languages = kwargs['languages']
+    languages = kwargs["languages"]
     if type(languages) != list:
         languages = [languages]
     language_filter = ['~language:"' + l + '"' for l in languages] if languages and languages[0] else []
 
     # Set building filter
-    organizations = kwargs['organizations']
+    organizations = kwargs["organizations"]
     if type(organizations) != list:
         organizations = [organizations]
     building_filter = ['~building:"' + get_most_similar_embedding("organizations_embeddings.pkl", o) + '"' for o in organizations] if organizations[0] else []
 
     # Set hierarchy filter
-    journals = kwargs['journals']
+    journals = kwargs["journals"]
     if type(journals) != list:
         journals = [journals]
     hierarchy_filter = ['~hierarchy_parent_title:"' + get_most_similar_embedding("journals_embeddings.pkl", j) + '"' for j in journals] if journals[0] else []
     
     # Set usage rights filter
-    usage_rights = kwargs['usage_rights']
+    usage_rights = kwargs["usage_rights"]
     if type(usage_rights) != list:
         usage_rights = [usage_rights]
     if all(x in usage_right_codes for x in usage_rights):
@@ -84,7 +84,7 @@ def search_library_records(**kwargs):
         usage_rights = []
 
     # Set online filter
-    online_filter = ['free_online_boolean:"1"'] if kwargs['available_online'] else []
+    online_filter = ['free_online_boolean:"1"'] if kwargs["available_online"] else []
     
     # Set filters
     filters = []
@@ -98,20 +98,17 @@ def search_library_records(**kwargs):
     print("filters:\n", filters)
 
     # Set fields to be returned
-    fields = kwargs['fields']
+    fields = kwargs["fields"]
     if type(fields) != list:
-        fields = [fields] 
+        fields = [fields]
     fields += [
         "buildings",
         "formats",
         "id",
         "imageRights",
-        "images",
         "languages",
         "nonPresenterAuthors",
-        "onlineUrls",
         "presenters",
-        "rating",
         "series",
         "subjects",
         "title",
@@ -120,15 +117,15 @@ def search_library_records(**kwargs):
     ]
 
     # Set sort method
-    sort_method = kwargs['sort_method'] if kwargs['sort_method'] else "relevance"
+    sort_method = kwargs["sort_method"] if kwargs["sort_method"] else "relevance"
 
     # Set search query language based on prompt language
-    prompt_lng = kwargs['prompt_lng']
+    prompt_lng = kwargs["prompt_lng"]
     if not prompt_lng in ["fi", "sv", "en-gb"]:
         prompt_lng = "fi"
 
     # Set limit to 5 if it was not set before
-    limit = kwargs['limit'] or 5
+    limit = kwargs["limit"] or 5
 
     # Make HTTP request to Finna search API
     req = requests.get(
@@ -509,11 +506,11 @@ with gr.Blocks() as app:
         chat_component_history.append((message, bot_response["message"]))
 
         if bot_response.get("search_parameters"):
-            parameter_message = f"Parameters used in search:\n \
-                                - Search terms: {', '.join(['`' + i['search_type'] + ':' + i['search_term'] + '`' for i in bot_response['search_parameters']['search_terms']])}\n \
-                                - Filters: `{bot_response['search_parameters']['filters']}`\n \
-                                - Sort method: `{bot_response['search_parameters']['sort_method']}`\n\n \
-                                Search results can be seen here: https://www.finna.fi/Search/Results?{bot_response['search_parameters']['search_url'].split('?',1)[1]}"
+            parameter_message = f"""Parameters used in search:\n 
+                                - Search terms: {', '.join(['`' + i['search_type'] + ':' + i['search_term'] + '`' for i in bot_response['search_parameters']['search_terms']])}\n
+                                - Filters: `{bot_response['search_parameters']['filters']}`\n
+                                - Sort method: `{bot_response['search_parameters']['sort_method']}`\n
+                                Search results can be seen here: https://www.finna.fi/Search/Results?{bot_response['search_parameters']['search_url'].split('?',1)[1]}"""
             chat_component_history.append((None, parameter_message))
 
         return {
