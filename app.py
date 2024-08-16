@@ -49,12 +49,15 @@ def search_library_records(**kwargs):
     formats = kwargs["formats"]
     if type(formats) != list:
         formats = [formats]
-    format_filter = ['~format:"0/' + f + '/"' for f in formats] if formats and formats[0] else []
+    format_filter = ['~format_ext_str_mv:"0/' + f + '/"' for f in formats] if formats and formats[0] else []
 
     # Set date range filter
-    date_from = str(kwargs["year_from"]) if kwargs["year_from"] else "*"
-    date_to = str(kwargs["year_to"]) if kwargs["year_to"] else "*"
-    date_range_filter = ['search_daterange_mv:"[' + date_from + ' TO ' + date_to + ']"']
+    if kwargs["year_from"] and kwargs["year_to"]:
+        date_from = str(kwargs["year_from"]) if kwargs["year_from"] else "*"
+        date_to = str(kwargs["year_to"]) if kwargs["year_to"] else "*"
+        date_range_filter = ['search_daterange_mv:"[' + date_from + ' TO ' + date_to + ']"']
+    else:
+        date_range_filter = ''
     
     # Set language filter
     languages = kwargs["languages"]
@@ -161,11 +164,12 @@ tools = [
         "type": "function",
         "function": {
             "name": "search_library_records",
+            "strict": True,
             "description": "Search a library database for records (i.e. books, movies, etc) and their fields (i.e. authors, title, etc).",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "search_terms":{
+                    "search_terms": {
                         "type": "array",
                         "description": "Array of search terms and search types that are used to find information about library records.\
                                         For example, [{\"search_term\": \"Stephen King\", \"search_type\": \"Author\"}, {\"search_term\": \"horror\", \"search_type\": \"Subject\"}]\
@@ -386,6 +390,7 @@ tools = [
                     },
                 },
                 "required": ["search_terms", "prompt_lng"],
+                "additionalProperties": False
             },
         },
     }
