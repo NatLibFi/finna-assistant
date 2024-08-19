@@ -164,7 +164,6 @@ tools = [
         "type": "function",
         "function": {
             "name": "search_library_records",
-            "strict": True,
             "description": "Search a library database for records (i.e. books, movies, etc) and their fields (i.e. authors, title, etc).",
             "parameters": {
                 "type": "object",
@@ -209,7 +208,9 @@ tools = [
                                         "Holdings"
                                     ]
                                 }
-                            }
+                            },
+                            "required": ["search_term", "search_type"],
+                            "additionalProperties": False
                         }
                     },
                     "search_bool": {
@@ -376,7 +377,7 @@ tools = [
                             "fi",
                             "sv",
                             "en-gb"
-                        ]
+                        ],
                     },
                     "available_online": {
                         "type": "boolean",
@@ -511,11 +512,14 @@ with gr.Blocks() as app:
         chat_component_history.append((message, bot_response["message"]))
 
         if bot_response.get("search_parameters"):
-            parameter_message = f"""Parameters used in search:\n 
-                                - Search terms: {', '.join(['`' + i['search_type'] + ':' + i['search_term'] + '`' for i in bot_response['search_parameters']['search_terms']])}\n
-                                - Filters: `{bot_response['search_parameters']['filters']}`\n
-                                - Sort method: `{bot_response['search_parameters']['sort_method']}`\n
-                                Search results can be seen here: https://www.finna.fi/Search/Results?{bot_response['search_parameters']['search_url'].split('?',1)[1]}"""
+            parameter_message = f"""
+                Parameters used in search:\n 
+                - Search terms: {', '.join(['`' + i['search_type'] + ':' + i['search_term'] + '`' for i in bot_response['search_parameters']['search_terms']])}\n
+                - Search boolean: `{bot_response['search_parameters']['bool']}`\n
+                - Filters: `{bot_response['search_parameters']['filters']}`\n
+                - Sort method: `{bot_response['search_parameters']['sort_method']}`\n
+                Search results can be seen here: https://www.finna.fi/Search/Results?{bot_response['search_parameters']['search_url'].split('?',1)[1]}
+            """
             chat_component_history.append((None, parameter_message))
 
         return {
