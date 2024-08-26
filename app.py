@@ -98,7 +98,6 @@ def search_library_records(**kwargs):
         format_filter = ['~format_ext_str_mv:"' + format_codes[x] + '"' for x in formats] if formats else []
     else:
         format_filter = []
-    #format_filter = ['~format_ext_str_mv:"0/' + f + '/"' for f in formats] if formats and formats[0] else []
 
     # Set date range filter
     if kwargs["year_from"] and kwargs["year_to"]:
@@ -322,10 +321,7 @@ tools = [
                                 "Board game",
                                 "Place",
                                 "Learning material",
-                                "AIPA",
-                                #"Unknown",
-                                #"frågelistsvar",
-                                #"offentliggjord inspelning"
+                                "AIPA"
                             ]
                         }
                     },
