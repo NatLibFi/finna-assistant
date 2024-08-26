@@ -24,6 +24,50 @@ usage_right_codes = {
     "Usage right not known": "0/H Unknown/"
 }
 
+format_codes = {
+    "Book": "0/Book/",
+    "eBook": "1/Book/eBook/",
+    "Audio book": "1/Book/AudioBook/",
+    "Journal": "0/Journal/",
+    "Article": "1/Journal/Article/",
+    "Archive/Collection": "0/Document/",
+    "Archive series": "1/Document/ArchiveSeries/",
+    "Image": "0/Image/",
+    "Thesis": "0/Thesis/",
+    "Sound": "0/Sound/",
+    "Physical object": "0/PhysicalObject/",
+    "Other text": "0/OtherText/",
+    "Letter": "1/OtherText/Letter/",
+    "Diary": "1/OtherText/Diary/",
+    "Musical score": "0/MusicalScore/",
+    "Video": "0/Video/",
+    "DVD": "1/Video/DVD/",
+    "BluRay": "1/Video/BluRay/",
+    "Map": "0/Map/",
+    "Work of art": "0/WorkOfArt/",
+    "Painting": "1/WorkOfArt/Painting/",
+    "Sculpture": "1/WorkOfArt/Sculpture/",
+    "Installation": "1/WorkOfArt/Installation/",
+    "Game": "0/Game/",
+    "Video game": "1/Game/VideoGame/",
+    "PlayStation 4": "2/Game/VideoGame/PS4/",
+    "Nintendo Switch": "2/Game/VideoGame/Switch/",
+    "Xbox One": "2/Game/VideoGame/Xbox One/",
+    "PlayStation 3": "2/Game/VideoGame/PS3/",
+    "PlayStation 5": "2/Game/VideoGame/PS5/",
+    "Xbox 360": "2/Game/VideoGame/Xbox 360/",
+    "Nintendo Wii": "2/Game/VideoGame/Wii/",
+    "Xbox Series X": "2/Game/VideoGame/Xbox X/",
+    "PC games": "2/Game/VideoGame/PC/",
+    "Nintendo Wii U": "2/Game/VideoGame/Wii U/",
+    "Nintendo 3DS": "2/Game/VideoGame/3DS/",
+    "Nintendo DS": "2/Game/VideoGame/DS/",
+    "Board game": "1/Game/BoardGame/",
+    "Place": "0/Place/",
+    "Learning material": "0/LearningMaterial/",
+    "AIPA": "0/AIPA/"
+}
+
 def get_most_similar_embedding(file, text):
     # Read embeddings from file
     df = pd.read_pickle(file)
@@ -49,7 +93,12 @@ def search_library_records(**kwargs):
     formats = kwargs["formats"]
     if type(formats) != list:
         formats = [formats]
-    format_filter = ['~format_ext_str_mv:"0/' + f + '/"' for f in formats] if formats and formats[0] else []
+    if all(x in format_codes for x in formats):
+        print('a')
+        format_filter = ['~format_ext_str_mv:"' + format_codes[x] + '"' for x in formats] if formats else []
+    else:
+        format_filter = []
+    #format_filter = ['~format_ext_str_mv:"0/' + f + '/"' for f in formats] if formats and formats[0] else []
 
     # Set date range filter
     if kwargs["year_from"] and kwargs["year_to"]:
@@ -234,25 +283,49 @@ tools = [
                             "description": "Record format type being filtered",
                             "enum": [
                                 "Book",
+                                "eBook",
+                                "Audio book",
                                 "Journal",
-                                "Document",
+                                "Article",
+                                "Archive/Collection",
+                                "Archive series",
                                 "Image",
                                 "Thesis",
                                 "Sound",
-                                "PhysicalObject",
-                                "OtherText",
-                                "MusicalScore",
+                                "Physical object",
+                                "Other text",
+                                "Letter",
+                                "Diary",
+                                "Musical score",
                                 "Video",
-                                "Other",
+                                "DVD",
+                                "BluRay",
                                 "Map",
-                                "WorkOfArt",
+                                "Work of art",
+                                "Painting",
+                                "Sculpture",
+                                "Installation",
                                 "Game",
+                                "Video game",
+                                "PlayStation 4",
+                                "Nintendo Switch",
+                                "Xbox One",
+                                "PlayStation 3",
+                                "PlayStation 5",
+                                "Xbox 360",
+                                "Nintendo Wii",
+                                "Xbox Series X",
+                                "PC games",
+                                "Nintendo Wii U",
+                                "Nintendo 3DS",
+                                "Nintendo DS"
+                                "Board game",
                                 "Place",
-                                "LearningMaterial",
+                                "Learning material",
                                 "AIPA",
-                                "Unknown",
-                                "frågelistsvar",
-                                "offentliggjord inspelning"
+                                #"Unknown",
+                                #"frågelistsvar",
+                                #"offentliggjord inspelning"
                             ]
                         }
                     },

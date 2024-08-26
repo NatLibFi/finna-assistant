@@ -87,10 +87,10 @@ Use the examples below to make calls to the `search_library_records` function. U
     - Query: Show me Finnish language learning materials that were published in 2014.
     - Parameters:
         - `search_terms`: [{"search_term": "", "search_type": ""}]
-        - `formats`: ["LearningMaterial"]
+        - `formats`: ["Learning material"]
         - `year_from`: 2014 and `year_to`: 2014
         - `prompt_lng`: "en-gb"
-7. Example 7 Searching for what institutions (libraries/museums/archives etc) have a specific book
+7. Example 7 Searching for which organizations (libraries/museums/archives etc) have a specific book
     - Query: In which libraries can I find a copy of the book "Sinuhe, the Egyptian"?
     - Parameters:
         - `search_terms`: [{"search_term": "Sinuhe, the Egyptian", "search_type": "Title"}]
@@ -98,18 +98,18 @@ Use the examples below to make calls to the `search_library_records` function. U
         - `fields`: ["institutions"]
         - `prompt_lng`: "en-gb"
     - Note: Using the additional field "institutions" to find out which libraries/museums/etc have the book
-8. Example 8 Searching for games in specific organizations
-    - Query: Find games available at the Helka and Helmet libraries.
+8. Example 8 Searching for video games in specific organizations
+    - Query: Find video games available at the Helka and Helmet libraries.
     - Parameters:
         - `search_terms`: [{"search_term": "", "search_type": ""}]
-        - `formats`: ["Game"]
+        - `formats`: ["Video game"]
         - `organizations`: ["Helka", "Helmet"]
         - `prompt_lng`: "en-gb"
 9. Example 9 Searching for articles about a person in a newspaper
     - Query: What articles have been released on Paavo Lipponen in Helsingin Sanomat?
     - Parameters:
         - `search_terms`: [{"search_term": "Paavo Lipponen", "search_type": "Subject"}]
-        - `formats`: ["Journal"]
+        - `formats`: ["Article"]
         - `journals`: ["Helsingin Sanomat"]
         - `prompt_lng`: "en-gb"
 10. Example 10 Searching for physical objects designed by a designer
@@ -117,17 +117,17 @@ Use the examples below to make calls to the `search_library_records` function. U
     - Parameters:
         - `search_terms`: [{"search_term": "Timo Sarpaneva", "search_type": "Author"}, {"search_term": "chair", "search_type": "AllFields"}]
         - `search_bool`: "AND"
-        - `formats`: ["PhysicalObject", "Image"],
+        - `formats`: ["Physical object", "Image"],
         - `prompt_lng`: "en-gb"
-    - Note: The search type of the designer is always "Author", the search type of the object is "AllFields", format is "PysicalObject" and "Image"
+    - Note: The search type of the designer is ALWAYS "Author", the search type of the object is "AllFields", format is "PhysicalObject" and "Image"
 11. Example 11 Searching for physical objects who are made by a company
     - Query: I'm looking for glasses made by Iittala
     - Parameters:
         - `search_terms`: [{"search_term": "Iittala", "search_type": "Author"}, {"search_term": "glass", "search_type": "AllFields"}]
         - `search_bool`: "AND"
-        - `formats`: ["PhysicalObject", "Image"],
+        - `formats`: ["Physical object", "Image"],
         - `prompt_lng`: "en-gb"
-    - Note: The search type of the company is always "Author", the search type of the object is "AllFields", format is "PysicalObject" and "Image"
+    - Note: The search type of the company is ALWAYS "Author", the search type of the object is "AllFields", format is "PhysicalObject" and "Image"
 11. Example 11 Searching for records based on subject or title
     - Query: Find records about cats and dogs or whose title includes "pet"
     - Parameters:
