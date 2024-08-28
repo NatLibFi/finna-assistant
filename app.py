@@ -12,6 +12,7 @@ client = AzureOpenAI(
   api_version="2024-02-15-preview"
 )
 
+gpt_model = "gpt-4o-mini"
 finna_api_base_url = "https://api.finna.fi/api/v1/"
 
 usage_right_codes = {
@@ -476,7 +477,7 @@ def predict(message, chat_history):
 
     chat_history.append({"role": "user", "content": message})
     response = client.chat.completions.create(
-        model="gpt-35-turbo-1106",
+        model=gpt_model,
         messages=chat_history,
         tools=tools,
         tool_choice="auto",
@@ -530,7 +531,7 @@ def predict(message, chat_history):
                 }
             )
         second_response = client.chat.completions.create(
-            model="gpt-35-turbo-1106",
+            model=gpt_model,
             messages=chat_history,
         )
         return {
