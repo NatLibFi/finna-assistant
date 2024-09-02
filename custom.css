@@ -1,0 +1,9 @@
+.gradio-container { 
+    max-width: 100% !important;
+}
+iframe {
+    width: 100%;
+    height: calc(100vh - 83px);
+    border: 1px #e5e7eb solid;
+    border-radius: 8px;
+}

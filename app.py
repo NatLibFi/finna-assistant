@@ -556,21 +556,24 @@ initial_chat_history = {
     "content": read_system_prompt()
 }
 
-with gr.Blocks() as app:
+with gr.Blocks(css="custom.css") as app:
     # Session state
     chat_history_var = gr.State([initial_chat_history])
+    finna_url_var = gr.State("")
 
     # UI components
-    chatbot = gr.Chatbot(height="calc(100vh - 200px)")
-    msg = gr.Textbox()
     with gr.Row():
         with gr.Column(scale=1):
-            clear = gr.ClearButton(components=[msg, chatbot])
-        with gr.Column(scale=1):
-            btn = gr.Button(value="Submit", variant="primary")
+            chatbot = gr.Chatbot(height="calc(100vh - 250px)")
+            msg = gr.Textbox()
+            with gr.Row():
+                clear = gr.ClearButton(value="Start a new chat", components=[msg, chatbot])
+                btn = gr.Button(value="Submit", variant="primary")
+        with gr.Column(scale=2):
+            iframe = gr.HTML("<iframe src=\"\"></iframe>")
 
     # Function to be called on submit
-    def respond(message, chat_component_history, chat_history):
+    def respond(message, chat_component_history, chat_history, url):
         bot_response = {}
         try:
             bot_response = predict(message, chat_history)
@@ -582,26 +585,39 @@ with gr.Blocks() as app:
         chat_component_history.append((message, bot_response["message"]))
 
         if bot_response.get("search_parameters"):
+            url = "https://testi-instituutio.finna-pre.fi/tekoaly/Search/Results?" + bot_response['search_parameters']['search_url'].split('?',1)[1]
             parameter_message = f"""
                 Parameters used in search:\n 
                 - Search terms: {', '.join(['`' + i['search_type'] + ':' + i['search_term'] + '`' for i in bot_response['search_parameters']['search_terms']])}\n
                 - Search boolean: `{bot_response['search_parameters']['bool']}`\n
                 - Filters: `{bot_response['search_parameters']['filters']}`\n
                 - Sort method: `{bot_response['search_parameters']['sort_method']}`\n
-                Search results can be seen here: https://www.finna.fi/Search/Results?{bot_response['search_parameters']['search_url'].split('?',1)[1]}
+                Search results can be seen here: {url}
             """
             chat_component_history.append((None, parameter_message))
+
+        iframe_str = f"<iframe src=\"{url}\"></iframe>"
 
         return {
             msg: "",
             chatbot: chat_component_history,
-            chat_history_var: bot_response["chat_history"]
+            iframe: iframe_str,
+            chat_history_var: bot_response["chat_history"],
+            finna_url_var: url
+        }
+    
+    # Function to be called on clear
+    def clear_chat():
+        return {
+            iframe: "<iframe src=\"\"></iframe>",
+            chat_history_var: [initial_chat_history],
+            finna_url_var: ""
         }
 
     # Event listeners
-    msg.submit(respond, [msg, chatbot, chat_history_var], [msg, chatbot, chat_history_var])
-    btn.click(respond, [msg, chatbot, chat_history_var], [msg, chatbot, chat_history_var])
-    clear.click(lambda _: [initial_chat_history], [chat_history_var], [chat_history_var])
+    msg.submit(fn=respond, inputs=[msg, chatbot, chat_history_var, finna_url_var], outputs=[msg, chatbot, iframe, chat_history_var, finna_url_var])
+    btn.click(fn=respond, inputs=[msg, chatbot, chat_history_var, finna_url_var], outputs=[msg, chatbot, iframe, chat_history_var, finna_url_var])
+    clear.click(fn=clear_chat, inputs=[], outputs=[iframe, chat_history_var, finna_url_var])
 
 if __name__ == "__main__":
     app.launch()
