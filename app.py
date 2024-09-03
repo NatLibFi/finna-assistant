@@ -564,7 +564,7 @@ with gr.Blocks(css="custom.css") as app:
     # UI components
     with gr.Row():
         with gr.Column(scale=1):
-            chatbot = gr.Chatbot(height="calc(100vh - 250px)")
+            chatbot = gr.Chatbot(height="calc(100vh - 200px)")
             msg = gr.Textbox()
             with gr.Row():
                 clear = gr.ClearButton(value="Start a new chat", components=[msg, chatbot])
