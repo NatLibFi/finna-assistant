@@ -183,7 +183,7 @@ def search_library_records(**kwargs):
     req = requests.get(
         finna_api_base_url + 'search',
         params={
-            "lookfor0[]": lookfor,
+            "lookfor0[]" if lookfor and len(lookfor) > 1 else "lookfor": lookfor,
             "type0[]": types,
             "bool0[]": search_bool,
             "filter[]": filters,
@@ -592,7 +592,7 @@ with gr.Blocks(css="custom.css") as app:
                 - Search boolean: `{bot_response['search_parameters']['bool']}`\n
                 - Filters: `{bot_response['search_parameters']['filters']}`\n
                 - Sort method: `{bot_response['search_parameters']['sort_method']}`\n
-                Search results can be seen here: {url}
+                Search results can be seen [here]({url})
             """
             chat_component_history.append((None, parameter_message))
 
