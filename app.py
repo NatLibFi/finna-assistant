@@ -95,7 +95,6 @@ def search_library_records(**kwargs):
     if type(formats) != list:
         formats = [formats]
     if all(x in format_codes for x in formats):
-        print('a')
         format_filter = ['~format_ext_str_mv:"' + format_codes[x] + '"' for x in formats] if formats else []
     else:
         format_filter = []
@@ -183,7 +182,7 @@ def search_library_records(**kwargs):
     req = requests.get(
         finna_api_base_url + 'search',
         params={
-            "lookfor0[]" if lookfor and len(lookfor) > 1 else "lookfor": lookfor,
+            "lookfor0[]": lookfor,
             "type0[]": types,
             "bool0[]": search_bool,
             "filter[]": filters,
@@ -520,14 +519,18 @@ def predict(message, chat_history):
                 available_online=function_args.get("available_online")
             )
 
-            search_parameters = json.loads(function_response)["search_parameters"]
+            response_data = json.loads(function_response)
+
+            # Extract search parameters form the response and remove them from chat history
+            search_parameters = response_data["search_parameters"]
+            response_data.pop("search_parameters")
 
             chat_history.append(
                 {
                     "tool_call_id": tool_call.id,
                     "role": "tool",
                     "name": function_name,
-                    "content": function_response,
+                    "content": json.dumps(response_data),
                 }
             )
         second_response = client.chat.completions.create(
