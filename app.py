@@ -176,7 +176,7 @@ def search_library_records(**kwargs):
         prompt_lng = "fi"
 
     # Set limit to 5 if it was not set before
-    limit = kwargs["limit"] or 5
+    limit = kwargs["limit"] or 50
 
     # Make HTTP request to Finna search API
     req = requests.get(
@@ -456,7 +456,7 @@ tools = [
                     },
                     "limit": {
                         "type": "integer",
-                        "description": "Number of records to return. Leave empty if no number is specified in user prompt. Default is 5. "
+                        "description": "Number of records to return. Leave empty if no number is specified in user prompt. Default is 50. "
                     },
                 },
                 "required": ["search_terms", "prompt_lng"],
