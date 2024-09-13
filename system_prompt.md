@@ -158,6 +158,6 @@ Use the examples below to make calls to the `search_library_records` function. U
     - Query: Are any of Agatha Christie's books available in Norwegian?
     - Parameters:
         - `search_terms`: [{"search_term": "Agatha Christie", "search_type": "Author"}]
-        - `formats`: [""]
+        - `formats`: ["Book"]
         - `languages`: ["nor"]
         - `prompt_lng`: "en-gb"
