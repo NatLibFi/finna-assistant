@@ -252,7 +252,6 @@ tools = [
                                         "toc",
                                         "publisher",
                                         "PublicationPlace",
-                                        "year",
                                         "Holdings"
                                     ]
                                 }
@@ -404,13 +403,11 @@ tools = [
                             "enum": [
                                 "alternativeTitles",
                                 "awards",
-                                "buildings",
                                 "callNumbers",
                                 "classifications",
                                 "collections",
                                 "edition",
                                 "genres",
-                                "imageRights",
                                 "institutions",
                                 "isbn",
                                 "originalLanguages",
@@ -549,15 +546,17 @@ def predict(message, chat_history):
         "search_parameters": search_parameters
     }
 
-def read_system_prompt():
-    with open("system_prompt.md", "r") as f:
+def read_file(file):
+    with open(file, "r") as f:
         output = f.read()
         return output
 
 initial_chat_history = {
     "role": "system",
-    "content": read_system_prompt()
+    "content": read_file("system_prompt.md")
 }
+
+build_date = read_file("date.txt")
 
 with gr.Blocks(css="custom.css") as app:
     # Session state
@@ -567,13 +566,14 @@ with gr.Blocks(css="custom.css") as app:
     # UI components
     with gr.Row():
         with gr.Column(scale=1):
-            chatbot = gr.Chatbot(height="calc(100vh - 200px)")
+            chatbot = gr.Chatbot(height="calc(100vh - 220px)")
             msg = gr.Textbox()
             with gr.Row():
                 clear = gr.ClearButton(value="Start a new chat", components=[msg, chatbot])
                 btn = gr.Button(value="Submit", variant="primary")
         with gr.Column(scale=2):
             iframe = gr.HTML("<iframe src=\"\"></iframe>")
+    build_message = gr.HTML(f"<div id=\"build-date\">App last built: {build_date}</div>")
 
     # Function to be called on submit
     def respond(message, chat_component_history, chat_history, url):

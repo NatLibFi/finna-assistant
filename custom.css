@@ -7,3 +7,9 @@ iframe {
     border: 1px #e5e7eb solid;
     border-radius: 8px;
 }
+#build-date {
+    color: #9ca3af;
+    padding-top: 0px;
+    position: absolute;
+    top: -28px;
+}
