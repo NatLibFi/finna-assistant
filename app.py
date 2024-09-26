@@ -477,11 +477,13 @@ def predict(message, chat_history):
         messages=chat_history,
         tools=tools,
         tool_choice="auto",
-        temperature=0.7,
+        parallel_tool_calls=False,
+        temperature=0.1,
         max_tokens=800,
-        top_p=0.95,
+        top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
+        seed=1,
         stop=None
     )
 
@@ -530,20 +532,32 @@ def predict(message, chat_history):
                     "content": json.dumps(response_data),
                 }
             )
+
         second_response = client.chat.completions.create(
             model=gpt_model,
             messages=chat_history,
+            temperature=0.1,
+            max_tokens=800,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+            seed=1,
+            stop=None
         )
+        chat_history.append(second_response.choices[0].message)
+
         return {
             "message": second_response.choices[0].message.content,
             "chat_history": chat_history,
-            "search_parameters": search_parameters
+            "search_parameters": search_parameters,
+            "total_tokens": second_response.usage.total_tokens
         }
     
     return {
-        "message": response.choices[0].message.content,
+        "message": response_message.content,
         "chat_history": chat_history,
-        "search_parameters": search_parameters
+        "search_parameters": search_parameters,
+        "total_tokens": response.usage.total_tokens
     }
 
 def read_file(file):
@@ -566,8 +580,8 @@ with gr.Blocks(css="custom.css") as app:
     # UI components
     with gr.Row():
         with gr.Column(scale=1):
-            chatbot = gr.Chatbot(height="calc(100vh - 220px)")
-            msg = gr.Textbox()
+            chatbot = gr.Chatbot(height="calc(100vh - 240px)")
+            msg = gr.Textbox(info="Tokens used: 0/128,000")
             with gr.Row():
                 clear = gr.ClearButton(value="Start a new chat", components=[msg, chatbot])
                 btn = gr.Button(value="Submit", variant="primary")
@@ -602,7 +616,7 @@ with gr.Blocks(css="custom.css") as app:
         iframe_str = f"<iframe src=\"{url}\"></iframe>"
 
         return {
-            msg: "",
+            msg: gr.update(value="", info=f"Tokens used: {bot_response['total_tokens']:,}/128,000"),
             chatbot: chat_component_history,
             iframe: iframe_str,
             chat_history_var: bot_response["chat_history"],
@@ -612,6 +626,7 @@ with gr.Blocks(css="custom.css") as app:
     # Function to be called on clear
     def clear_chat():
         return {
+            msg: gr.update(value="", info="Tokens used: 0/128,000"),
             iframe: "<iframe src=\"\"></iframe>",
             chat_history_var: [initial_chat_history],
             finna_url_var: ""
@@ -620,7 +635,7 @@ with gr.Blocks(css="custom.css") as app:
     # Event listeners
     msg.submit(fn=respond, inputs=[msg, chatbot, chat_history_var, finna_url_var], outputs=[msg, chatbot, iframe, chat_history_var, finna_url_var])
     btn.click(fn=respond, inputs=[msg, chatbot, chat_history_var, finna_url_var], outputs=[msg, chatbot, iframe, chat_history_var, finna_url_var])
-    clear.click(fn=clear_chat, inputs=[], outputs=[iframe, chat_history_var, finna_url_var])
+    clear.click(fn=clear_chat, inputs=[], outputs=[msg, iframe, chat_history_var, finna_url_var])
 
 if __name__ == "__main__":
     app.launch()
