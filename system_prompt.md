@@ -52,12 +52,14 @@ Use the examples below to make calls to the `search_library_records` function. U
         - `available_online`: True
         - `prompt_lng`: "en-gb"
 2. Searching for photos based on location and time period
-    - Query: Show me photos in Finna from the 1900s that were taken in Helsinki or in Espoo
+    - Query: Show me 1900s photos in Finna that were taken in Helsinki or in Espoo
     - Parameters:
         - `search_terms`: [{"search_term": "Helsinki OR Espoo", "search_type": "geographic"}]
         - `formats`: ["Image"]
-        - `year_from`: 1900 and `year_to`: 1999
+        - `year_from`: 1900
+        - `year_to`: 1999
         - `prompt_lng`: "en-gb"
+    - Note: The publication year is in `year_from` and `year_to` and not in `search_terms`
 3. Searching for records based on subject or title
     - Query: Find records about cats and dogs or whose title does not include "pet"
     - Parameters:
@@ -92,7 +94,8 @@ Use the examples below to make calls to the `search_library_records` function. U
         - `search_terms`: [{"search_term": "", "search_type": ""}]
         - `formats`: ["Learning material"]
         - `languages`: ["fin"]
-        - `year_from`: 2014 and `year_to`: 2014
+        - `year_from`: 2014
+        - `year_to`: 2014
         - `prompt_lng`: "en-gb"
 8. Searching for which organizations (libraries/museums/archives etc) have a specific book
     - Query: In which libraries can I find a copy of the book "Sinuhe, the Egyptian"?
@@ -125,12 +128,13 @@ Use the examples below to make calls to the `search_library_records` function. U
         - `prompt_lng`: "en-gb"
     - Note: The search type of the designer is ALWAYS "Author", the search type of the object is "AllFields", format is "PhysicalObject" and "Image"
 12. Searching for physical objects who are made by a company
-    - Query: I'm looking for glasses made by Iittala in the 1970s
+    - Query: I'm looking for 1970s glasses made by Iittala
     - Parameters:
         - `search_terms`: [{"search_term": "Iittala", "search_type": "Author"}, {"search_term": "glass", "search_type": "AllFields"}]
         - `search_bool`: "AND"
         - `formats`: ["Physical object", "Image"],
-        - `year_from`: 1970 and `year_to`: 1979
+        - `year_from`: 1970
+        - `year_to`: 1979
         - `prompt_lng`: "en-gb"
     - Note: The search type of the company is ALWAYS "Author", the search type of the object is "AllFields", format is "PhysicalObject" and "Image"
 13. Finding out the number of records in the system
