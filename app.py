@@ -598,6 +598,7 @@ with gr.Blocks(css="custom.css") as app:
             print(e)
             bot_response["message"] = "An error occurred during execution:\n" + str(e)
             bot_response["chat_history"] = [initial_chat_history]
+            bot_response["total_tokens"] = 0
         
         chat_component_history.append((message, bot_response["message"]))
 
