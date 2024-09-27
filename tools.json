@@ -1,0 +1,217 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "search_library_records",
+            "description": "Make a search to the Finna system to find records matching some search criteria.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "search_terms": {
+                        "type": "array",
+                        "description": "Array of search terms and search types that are used to find information about library records. For example, [{\"search_term\": \"Stephen King\", \"search_type\": \"Author\"}, {\"search_term\": \"Carrie\", \"search_type\": \"Title\"}] when searching for records with title Carrie and author Stephen King.",
+                        "items": {
+                            "type": "object",
+                            "description": "Object containing a search term and its type.",
+                            "properties": {
+                                "search_term": {
+                                    "type": "string",
+                                    "description": "Keyword or phrase that is used to search for Finna records. May be a single term, multiple words or a complex query containing boolean operators (AND, OR, NOT). For example, \"cat AND dog\" when searching for records containing both \"cat\" and \"dog\" or \"NOT dog\" when \"dog\" should be excluded from search results. ALWAYS use uppercase boolean operators."
+                                },
+                                "search_type": {
+                                    "type": "string",
+                                    "description": "The type of field being searched. For example, use \"Title\" to match search term to titles of records or \"Subject\" to match search term to subjects of records. ONLY use the options given.",
+                                    "enum": [
+                                        "AllFields",
+                                        "Title",
+                                        "TitleStart",
+                                        "TitleExact",
+                                        "Author",
+                                        "Subject",
+                                        "description",
+                                        "geographic",
+                                        "Classification",
+                                        "Identifier",
+                                        "Series",
+                                        "toc",
+                                        "publisher",
+                                        "PublicationPlace",
+                                        "Holdings"
+                                    ]
+                                }
+                            },
+                            "required": ["search_term", "search_type"],
+                            "additionalProperties": false
+                        }
+                    },
+                    "search_bool": {
+                        "type": "string",
+                        "description": "Boolean operator that connects all search terms. Use \"AND\" when search results should match all search terms and \"OR\" when search results could match any. Only use the options given. ALWAYS use search_bool if there is more than one search term.",
+                        "enum": [
+                            "AND",
+                            "OR"
+                        ]
+                    },
+                    "formats": {
+                        "type": "array",
+                        "description": "Array of format filters used to filter search results based on the formats of records. For example, using [\"Book\", \"Image\"] to only search for books and images. Only use the options given. When formats is empty, all record types are included in results.",
+                        "items": {
+                            "type": "string",
+                            "description": "Record format type being filtered",
+                            "enum": [
+                                "Book",
+                                "eBook",
+                                "Audio book",
+                                "Journal",
+                                "Article",
+                                "Archive/Collection",
+                                "Archive series",
+                                "Image",
+                                "Thesis",
+                                "Sound",
+                                "Physical object",
+                                "Other text",
+                                "Letter",
+                                "Diary",
+                                "Musical score",
+                                "Video",
+                                "DVD",
+                                "BluRay",
+                                "Map",
+                                "Work of art",
+                                "Painting",
+                                "Sculpture",
+                                "Installation",
+                                "Game",
+                                "Video game",
+                                "PlayStation 4",
+                                "Nintendo Switch",
+                                "Xbox One",
+                                "PlayStation 3",
+                                "PlayStation 5",
+                                "Xbox 360",
+                                "Nintendo Wii",
+                                "Xbox Series X",
+                                "PC games",
+                                "Nintendo Wii U",
+                                "Nintendo 3DS",
+                                "Nintendo DS",
+                                "Board game",
+                                "Place",
+                                "Learning material",
+                                "AIPA"
+                            ]
+                        }
+                    },
+                    "year_from": {
+                        "type": "integer",
+                        "description": "The starting year of the date range for filtering search results. For example, 2020 when searching for records published since 2020. Use negative numbers for years before the Common Era, for example -1000 for 1000BCE. Leave empty if no date range is specified."
+                    },
+                    "year_to": {
+                        "type": "integer",
+                        "description": "The end year of the date range for filtering search results. For example, 2024 when searching for records published until 2024. Use negative numbers for years before the Common Era, for example -1000 for 1000BCE. Leave empty if no date range is specified."
+                    },
+                    "languages": {
+                        "type": "array",
+                        "description": "Array of ISO 639-3 language codes to filter search results based on the languages of records. For example, ['fin', 'deu'] when searching for records in Finnish or German. Leave empty if no languages are specified.",
+                        "items": {
+                            "type": "string",
+                            "description": "ISO 639-3 code for the language of the records being searched."
+                        }
+                    },
+                    "organizations": {
+                        "type": "array",
+                        "description": "Array of organization names used to filter search results based on what institutions the records are available. For example [\"The National Library\", \"Åbo Akademi Library\"] when searching for records available at the National Library and at Åbo Akademi Library. DO NOT try to guess what the user meant, just use the names given in the prompt. Leave empty if no organization is specified.",
+                        "items": {
+                            "type": "string",
+                            "description": "The name of the organization whose records are being searched."
+                        }
+                    },
+                    "journals": {
+                        "type": "array",
+                        "description": "Array of journal names used to filter search results based on what journals the records have been published in. For example [\"Helsingin Sanomat\", \"Turun Sanomat\"] when searching for articles published in Helsingin Sanomat and in Turun Sanomat. DO NOT try to guess what the user meant, just use the names given in the prompt. Leave empty if no journal is specified in the prompt.",
+                        "items": {
+                            "type": "string",
+                            "description": "The name of the journal whose articles are being searched."
+                        }
+                    },
+                    "usage_rights": {
+                        "type": "array",
+                        "description": "Array of usage rights used to filter search results based on the usage rights of records. For example, [\"No commercial use (CC BY-NC or CC BY-NC-SA)\", \"No commercial use, no edits (CC BY-NC-ND)\"] when searching for records not available for commercial use. Only use the options given. Leave empty if no rights are specified in the prompt.",
+                        "items": {
+                            "type": "string",
+                            "description": "Type of usage right restriction of the records being searched.",
+                            "enum": [
+                                "No restrictions (CC0 or Public Domain)",
+                                "No restrictions, source must be named (CC BY or CC BY-SA)",
+                                "No commercial use (CC BY-NC or CC BY-NC-SA)",
+                                "No edits (CC BY-ND)",
+                                "No commercial use, no edits (CC BY-NC-ND)",
+                                "In copyright",
+                                "Usage right not known"
+                            ]
+                        }
+                    },
+                    "fields": {
+                        "type": "array",
+                        "description": "List of record fields to return in addition to default fields. For example, [\"institutions\"] to see the organizations that hold the records or [\"physicalDescriptions\"] to see the number of pages of a book. Only use the options given. Leave empty if no fields are specified.",
+                        "items": {
+                            "type": "string",
+                            "description": "Field to be returned.",
+                            "enum": [
+                                "alternativeTitles",
+                                "awards",
+                                "callNumbers",
+                                "classifications",
+                                "collections",
+                                "edition",
+                                "genres",
+                                "institutions",
+                                "isbn",
+                                "originalLanguages",
+                                "physicalDescriptions",
+                                "placesOfPublication",
+                                "publishers",
+                                "rating",
+                                "summary",
+                                "toc"
+                            ]
+                        }
+                    },
+                    "sort_method": {
+                        "type": "string",
+                        "description": "The method used to sort search results. For example, \"main_date_str desc\" to sort results by publication year in a descending order. Default is \"relevance\". Only use the options given.",
+                        "enum": [
+                            "relevance",
+                            "main_date_str desc",
+                            "main_date_str asc",
+                            "callnumber",
+                            "author",
+                            "title",
+                            "last_indexed desc"
+                        ]
+                    },
+                    "prompt_lng": {
+                        "type": "string",
+                        "description": "Language of the user prompt. \"fi\" for Finnish, \"sv\" for Swedish and \"en-gb\" for English. If the prompt is not in Finnish, Swedish or English, use Finnish. For example, if the prompt is in German, use \"fi\". Only use the options given.",
+                        "enum": [
+                            "fi",
+                            "sv",
+                            "en-gb"
+                        ]
+                    },
+                    "available_online": {
+                        "type": "boolean",
+                        "description": "Boolean used to filter search results based on the online availability of records. When set to True, the search will exclusively return records that are available online. If set to False, the results will include records both available and unavailable online."
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of records to return. Leave empty if no number is specified in user prompt. Default is 50. "
+                    }
+                },
+                "required": ["search_terms", "prompt_lng"],
+                "additionalProperties": false
+            }
+        }
+    }
+]
