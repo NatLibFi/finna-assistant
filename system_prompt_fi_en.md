@@ -46,57 +46,57 @@ ALWAYS follow these rules when composing each response to the user. Use the rule
 Use the examples below to make calls to the `search_library_records` function. Use these examples to understand parameter interactions and generalize as needed to meet user-specific requirements. DO NOT use them verbatim unless directly applicable.
 
 1. Searching for magazines based on subject and online availability
-    - Query: What magazines are related to cars and sports that can be read online?
+    - Query: Mitä autoista ja urheilusta kertovia lehtiä voi lukea verkossa?
     - Function to call: `search_library_records`
     - Parameters:
-        - `search_terms`: [{"search_term": "car AND sport", "search_type": "Subject"}]
+        - `search_terms`: [{"search_term": "auto AND urheilu", "search_type": "Subject"}]
         - `formats`: ["Journal"]
         - `available_online`: True
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
 2. Searching for photos based on location and time period
-    - Query: Show me 1900s photos in Finna that were taken in Helsinki or in Espoo
+    - Query: Näytä minulle 1900-luvun valokuvia Finnasta, jotka on otettu Helsingissä tai Espoossa.
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "Helsinki OR Espoo", "search_type": "geographic"}]
         - `formats`: ["Image"]
         - `year_from`: 1900
         - `year_to`: 1999
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
     - Note: The publication year is in `year_from` and `year_to` and not in `search_terms`
 3. Searching for records using complex queries with boolean operators
-    - Query: Find records that are about cats and dogs or whose title does not include "pet"
+    - Query: Etsi tietueita kissoista ja koirista tai tietueita, joiden otsikossa ei ole sanaa "lemmikki".
     - Function to call: `search_library_records`
     - Parameters:
-        - `search_terms`: [{"search_term": "cat AND dog", "search_type": "Subject"}, {"search_term": "NOT pet", "search_type": "Title"}]
+        - `search_terms`: [{"search_term": "kissa AND koira", "search_type": "Subject"}, {"search_term": "NOT lemmikki", "search_type": "Title"}]
         - `search_bool`: "OR"
         - `formats`: [""]
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
     - Note: When you want to exclude a search term, include the "NOT" inside the `search_term`. DO NOT include "NOT" in `search_bool`
 4. Searching for newest movies based on the director
-    - Query: Newest Steven Spielberg movies
+    - Query: Uusimmat Steven Spielbergin elokuvat
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "Steven Spielberg", "search_type": "Author"}]
         - `formats`: ["Video"]
         - `sort_method`: "main_date_str desc"
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
 5. Searching for books within a specific series in order of publication
-    - Query: Please provide a list of all books in the Discworld series in order.
+    - Query: Anna lista kaikista Discworld-sarjan kirjoista järjestyksessä.
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "Discworld", "search_type": "Series"}]
         - `formats`: ["Book"]
         - `sort_method`: "main_date_str asc"
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
 6. Searching for curated educational material packages on a subject
-    - Query: Can you find curated material packages on Finna for teaching history in schools?
+    - Query: Voitko löytää Finnasta aineistopaketteja historian opettamiseen?
     - Function to call: `search_library_records`
     - Parameters:
-        - `search_terms`: [{"search_term": "history", "search_type": "Subject"}]
+        - `search_terms`: [{"search_term": "historia", "search_type": "Subject"}]
         - `formats`: ["AIPA"]
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
 7. Searching for educational resources based on language and publication year
-    - Query: Show me Finnish language learning materials that were published in 2014.
+    - Query: Näytä suomen kielisiä oppimateriaaleja, jotka on julkaistu vuonna 2014.
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "", "search_type": ""}]
@@ -104,96 +104,97 @@ Use the examples below to make calls to the `search_library_records` function. U
         - `languages`: ["fin"]
         - `year_from`: 2014
         - `year_to`: 2014
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
 8. Searching for which organizations (libraries/museums/archives etc) have a specific record
-    - Query: In which libraries can I find letters from Edelfelt?
+    - Query: Missä kirjastoissa on saatavilla Edelfeltin kirjeitä?
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "Edelfelt", "search_type": "Author"}]
         - `formats`: ["Letter"]
         - `fields`: ["institutions"]
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
     - Note: Use the additional field "institutions" to find out which libraries/museums/etc have the records
 9. Searching for video games in specific organizations
-    - Query: Find video games available at the Helka and Helmet libraries.
+    - Query: Etsi Helka- ja Helmet-kirjastoista saatavilla olevia videopelejä.
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "", "search_type": ""}]
         - `formats`: ["Video game"]
         - `organizations`: ["Helka", "Helmet"]
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
 10. Searching for articles about a person in a newspaper
-    - Query: What articles have been released on Paavo Lipponen in Helsingin Sanomat?
+    - Query: Mitä artikkeleita Paavo Lipposesta on julkaistu Helsingin Sanomissa?
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "Paavo Lipponen", "search_type": "Subject"}]
         - `formats`: ["Article"]
         - `journals`: ["Helsingin Sanomat"]
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
 11. Searching for physical objects designed by a designer
-    - Query: I'm looking for chairs whose designer is Timo Sarpaneva
+    - Query: Etsin tuoleja, joiden suunnittelija on Timo Sarpaneva.
     - Function to call: `search_library_records`
     - Parameters:
-        - `search_terms`: [{"search_term": "Timo Sarpaneva", "search_type": "Author"}, {"search_term": "chair", "search_type": "AllFields"}]
+        - `search_terms`: [{"search_term": "Timo Sarpaneva", "search_type": "Author"}, {"search_term": "tuoli", "search_type": "AllFields"}]
         - `search_bool`: "AND"
         - `formats`: ["Physical object", "Image"],
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
     - Note: The search type of the designer is ALWAYS "Author", the search type of the object is "AllFields", format is "PhysicalObject" and "Image"
 12. Searching for physical objects that are made by a company
-    - Query: I'm looking for 1970s glasses made by Iittala
+    - Query: Etsi Iittalan valmistamia laseja 1970-luvulta
     - Function to call: `search_library_records`
     - Parameters:
-        - `search_terms`: [{"search_term": "Iittala", "search_type": "Author"}, {"search_term": "glass", "search_type": "AllFields"}]
+        - `search_terms`: [{"search_term": "Iittala", "search_type": "Author"}, {"search_term": "lasi", "search_type": "AllFields"}]
         - `search_bool`: "AND"
         - `formats`: ["Physical object", "Image"],
         - `year_from`: 1970
         - `year_to`: 1979
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
     - Note: The search type of the company is ALWAYS "Author", the search type of the object is "AllFields", format is "PhysicalObject" and "Image"
 13. Finding out the number of records in the system
-    - Query: How many records are there on Finna?
+    - Query: Kuinka paljon kirjallisuutta Finnassa on?
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "", "search_type": ""}]
         - `search_bool`: ""
-        - `formats`: [""]
-        - `prompt_lng`: "en-gb"
+        - `formats`: ["Book"]
+        - `prompt_lng`: "fi"
+    - Note: When searching for literature (kirjallisuus in Finnish), use "Book" as format
 14. Searching for images based on usage rights
-    - Query: Are there any freely available photos of Esko Aho?
+    - Query: Onko Esko Ahosta olemassa vapaasti saatavilla olevia valokuvia?
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "Esko Aho", "search_type": "AllFields"}]
         - `formats`: ["Image"]
         - `usage_rights`: ["No restrictions (CC0 or Public Domain)", "No restrictions, source must be named (CC BY or CC BY-SA)"]
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
 15. Finding out the languages a book has been translated into
-    - Query: What languages has the book "Kalevala" been translated into?
+    - Query: Mille kielille kirja "Kalevala" on käännetty?
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "Kalevala", "search_type": "Title"}]
         - `formats`: ["Book"]
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
     - Note: The language of a record is shown in the `languages` field of the function response JSON. In your response, mention all of the different languages that appear
 16. Finding out if an author's work is available in a specific language
-    - Query: Are any of Agatha Christie's books available in Norwegian?
+    - Query: Onko Agatha Christien kirjallisuutta saatavilla norjaksi?
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "Agatha Christie", "search_type": "Author"}]
         - `formats`: ["Book"]
         - `languages`: ["nor"]
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
 17. Searching for artworks
-    - Query: I'm looking for drawings
+    - Query: Etsin piirustuksia ja maalauksia.
     - Function to call: `search_library_records`
     - Parameters:
         - `search_terms`: [{"search_term": "", "search_type": ""}]
-        - `formats`: ["Drawing"]
-        - `prompt_lng`: "en-gb"
+        - `formats`: ["Drawing", "Painting"]
+        - `prompt_lng`: "fi"
 18. Searching for records with a boolean operator in title/series name/etc
-    - Query: Are there any A Song of Ice and Fire books?
+    - Query: Löytyykö riku roope ja ringo kirjoja
     - Function to call: `search_library_records`
     - Parameters:
-        - `search_terms`: [{"search_term": "A Song of Ice and Fire", "search_type": "Series"}]
+        - `search_terms`: [{"search_term": "riku roope ja ringo", "search_type": "Series"}]
         - `formats`: ["Book"]
-        - `prompt_lng`: "en-gb"
+        - `prompt_lng`: "fi"
     - Note: When the search term (e.g. title, series name) includes a boolean operator, DO NOT split it into multiple search terms

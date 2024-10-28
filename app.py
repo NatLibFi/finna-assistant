@@ -51,6 +51,7 @@ format_codes = {
     "BluRay": "1/Video/BluRay/",
     "Map": "0/Map/",
     "Work of art": "0/WorkOfArt/",
+    "Drawing": "1/WorkOfArt/Drawing/",
     "Painting": "1/WorkOfArt/Painting/",
     "Sculpture": "1/WorkOfArt/Sculpture/",
     "Installation": "1/WorkOfArt/Installation/",
@@ -105,12 +106,12 @@ def search_library_records(**kwargs):
         format_filter = []
 
     # Set date range filter
-    if kwargs["year_from"] and kwargs["year_to"]:
+    if kwargs["year_from"] or kwargs["year_to"]:
         date_from = str(kwargs["year_from"]) if kwargs["year_from"] else "*"
         date_to = str(kwargs["year_to"]) if kwargs["year_to"] else "*"
         date_range_filter = ['search_daterange_mv:"[' + date_from + ' TO ' + date_to + ']"']
     else:
-        date_range_filter = ''
+        date_range_filter = []
     
     # Set language filter
     languages = kwargs["languages"]
@@ -311,42 +312,46 @@ def predict(message, chat_history):
         "total_tokens": response.usage.total_tokens
     }
 
-initial_chat_history = {
-    "role": "system",
-    "content": read_file("system_prompt.md")
-}
+def initial_chat_history(file):
+    return {
+        "role": "system",
+        "content": read_file(file)
+    }
 
 build_date = read_file("date.txt")
 
-with gr.Blocks(css="custom.css") as app:
+with gr.Blocks(css_paths="custom.css") as demo:
     # Session state
-    chat_history_var = gr.State([initial_chat_history])
+    chat_history_var = gr.State([initial_chat_history("system_prompt.md")])
     finna_url_var = gr.State("")
+    selected_prompt_var = gr.State("system_prompt.md")
 
     # UI components
     with gr.Row():
         with gr.Column(scale=1):
-            chatbot = gr.Chatbot(height="calc(100vh - 240px)")
+            chatbot = gr.Chatbot(height="calc(100vh - 250px)", type="messages")
             msg = gr.Textbox(info="Tokens used: 0/128,000")
             with gr.Row():
-                clear = gr.ClearButton(value="Start a new chat", components=[msg, chatbot])
-                btn = gr.Button(value="Submit", variant="primary")
+                clear = gr.ClearButton(value="Start a new chat", components=[msg, chatbot], scale=1)
+                btn = gr.Button(value="Submit", variant="primary", scale=1)
+                dropdown = gr.Dropdown(["English system prompt", "Finnish system prompt", "English with Finnish examples"], value="English system prompt", type="index", interactive=True, show_label=False, container=False, scale=2)
+            build_message = gr.HTML(f"<div id=\"build-date\">App last built: {build_date}</div>")
         with gr.Column(scale=2):
             iframe = gr.HTML("<iframe src=\"\"></iframe>")
-    build_message = gr.HTML(f"<div id=\"build-date\">App last built: {build_date}</div>")
 
     # Function to be called on submit
-    def respond(message, chat_component_history, chat_history, url):
+    def respond(message, chat_component_history, chat_history, url, prompt_file):
         bot_response = {}
         try:
             bot_response = predict(message, chat_history)
         except Exception as e:
             print(e)
             bot_response["message"] = "An error occurred during execution:\n" + str(e)
-            bot_response["chat_history"] = [initial_chat_history]
+            bot_response["chat_history"] = [initial_chat_history(prompt_file)]
             bot_response["total_tokens"] = 0
         
-        chat_component_history.append((message, bot_response["message"]))
+        chat_component_history.append({"role": "user", "content": message})
+        chat_component_history.append({"role": "assistant", "content":  bot_response["message"]})
 
         if bot_response.get("search_parameters"):
             url = "https://testi-instituutio.finna-pre.fi/tekoaly/Search/Results?" + bot_response['search_parameters']['search_url'].split('?',1)[1]
@@ -358,7 +363,7 @@ with gr.Blocks(css="custom.css") as app:
                 - Sort method: `{bot_response['search_parameters']['sort_method']}`\n
                 Search results can be seen [here]({url})
             """
-            chat_component_history.append((None, parameter_message))
+            chat_component_history.append({"role": "assistant", "content": parameter_message})
 
         iframe_str = f"<iframe src=\"{url}\"></iframe>"
 
@@ -371,18 +376,21 @@ with gr.Blocks(css="custom.css") as app:
         }
     
     # Function to be called on clear
-    def clear_chat():
+    def clear_chat(system_prompt):
+        files = ["system_prompt.md", "system_prompt_fi.md", "system_prompt_fi_en.md"]
         return {
             msg: gr.update(value="", info="Tokens used: 0/128,000"),
             iframe: "<iframe src=\"\"></iframe>",
-            chat_history_var: [initial_chat_history],
-            finna_url_var: ""
+            chat_history_var: [initial_chat_history(files[system_prompt])],
+            finna_url_var: "",
+            selected_prompt_var: files[system_prompt]
         }
 
     # Event listeners
-    msg.submit(fn=respond, inputs=[msg, chatbot, chat_history_var, finna_url_var], outputs=[msg, chatbot, iframe, chat_history_var, finna_url_var])
-    btn.click(fn=respond, inputs=[msg, chatbot, chat_history_var, finna_url_var], outputs=[msg, chatbot, iframe, chat_history_var, finna_url_var])
-    clear.click(fn=clear_chat, inputs=[], outputs=[msg, iframe, chat_history_var, finna_url_var])
+    msg.submit(fn=respond, inputs=[msg, chatbot, chat_history_var, finna_url_var, selected_prompt_var], outputs=[msg, chatbot, iframe, chat_history_var, finna_url_var])
+    btn.click(fn=respond, inputs=[msg, chatbot, chat_history_var, finna_url_var, selected_prompt_var], outputs=[msg, chatbot, iframe, chat_history_var, finna_url_var])
+    clear.click(fn=clear_chat, inputs=[dropdown], outputs=[msg, iframe, chat_history_var, finna_url_var, selected_prompt_var])
+    dropdown.input(fn=clear_chat, inputs=[dropdown], outputs=[msg, iframe, chat_history_var, finna_url_var, selected_prompt_var])
 
 if __name__ == "__main__":
-    app.launch()
+    demo.launch()

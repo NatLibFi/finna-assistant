@@ -79,6 +79,7 @@
                                 "BluRay",
                                 "Map",
                                 "Work of art",
+                                "Drawing",
                                 "Painting",
                                 "Sculpture",
                                 "Installation",
@@ -154,7 +155,7 @@
                     },
                     "fields": {
                         "type": "array",
-                        "description": "List of record fields to return in addition to default fields. For example, [\"institutions\"] to see the organizations that hold the records or [\"physicalDescriptions\"] to see the number of pages of a book. Only use the options given. Leave empty if no fields are specified.",
+                        "description": "List of record fields to return in addition to default fields. For example, [\"institutions\"] to see the organizations that hold the records or [\"physicalDescriptions\"] to see the physical description of a records (i.e. number of pages of a book, etc). Only use the options given. Leave empty if no fields are specified.",
                         "items": {
                             "type": "string",
                             "description": "Field to be returned.",
@@ -202,7 +203,7 @@
                     },
                     "available_online": {
                         "type": "boolean",
-                        "description": "Boolean used to filter search results based on the online availability of records. When set to True, the search will exclusively return records that are available online. If set to False, the results will include records both available and unavailable online."
+                        "description": "Boolean used to filter search results based on the online availability of records, for example when searching for digitized images. When set to True, the search will exclusively return records that are available online. If set to False, the results will include records both available and unavailable online."
                     },
                     "limit": {
                         "type": "integer",
