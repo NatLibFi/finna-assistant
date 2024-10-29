@@ -319,7 +319,7 @@ def initial_chat_history(file):
 
 build_date = read_file("date.txt")
 
-with gr.Blocks(css_paths="custom.css", theme=gr.themes.Default(spacing_size="sm", radius_size="md")) as demo:
+with gr.Blocks(css_paths="custom.css", theme=gr.themes.Default(spacing_size="sm", text_size="sm", radius_size="md")) as demo:
     # Session state
     chat_history_var = gr.State([initial_chat_history("system_prompt.md")])
     finna_url_var = gr.State("")

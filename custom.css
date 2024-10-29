@@ -12,4 +12,5 @@ iframe {
 }
 .gr-button {
     border-radius: 4px;
+    font-size: var(--text-md);
 }
