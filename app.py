@@ -220,7 +220,6 @@ available_functions = {
 }
 
 def predict(message, chat_history):
-    print("-----")
     print("message:\n", message)
 
     chat_history.append({"role": "user", "content": message})
@@ -320,7 +319,7 @@ def initial_chat_history(file):
 
 build_date = read_file("date.txt")
 
-with gr.Blocks(css_paths="custom.css") as demo:
+with gr.Blocks(css_paths="custom.css", theme=gr.themes.Default(spacing_size="sm", radius_size="md")) as demo:
     # Session state
     chat_history_var = gr.State([initial_chat_history("system_prompt.md")])
     finna_url_var = gr.State("")
@@ -329,11 +328,11 @@ with gr.Blocks(css_paths="custom.css") as demo:
     # UI components
     with gr.Row():
         with gr.Column(scale=1):
-            chatbot = gr.Chatbot(height="calc(100vh - 250px)", type="messages")
+            chatbot = gr.Chatbot(height="calc(100vh - 220px)", type="messages")
             msg = gr.Textbox(info="Tokens used: 0/128,000")
             with gr.Row():
-                clear = gr.ClearButton(value="Start a new chat", components=[msg, chatbot], scale=1)
-                btn = gr.Button(value="Submit", variant="primary", scale=1)
+                clear = gr.ClearButton(value="Start a new chat", components=[msg, chatbot], elem_classes="gr-button", scale=1)
+                btn = gr.Button(value="Submit", variant="primary", elem_classes="gr-button", scale=1)
                 dropdown = gr.Dropdown(["English system prompt", "Finnish system prompt", "English with Finnish examples"], value="English system prompt", type="index", interactive=True, show_label=False, container=False, scale=2)
             build_message = gr.HTML(f"<div id=\"build-date\">App last built: {build_date}</div>")
         with gr.Column(scale=2):
@@ -342,6 +341,8 @@ with gr.Blocks(css_paths="custom.css") as demo:
     # Function to be called on submit
     def respond(message, chat_component_history, chat_history, url, prompt_file):
         bot_response = {}
+        print("-----")
+        print("prompt file:\n", prompt_file)
         try:
             bot_response = predict(message, chat_history)
         except Exception as e:

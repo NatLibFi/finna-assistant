@@ -5,8 +5,11 @@ iframe {
     width: 100%;
     height: calc(100vh - 33px);
     border: 1px #e5e7eb solid;
-    border-radius: 8px;
+    border-radius: 4px;
 }
 #build-date {
     color: #9ca3af;
+}
+.gr-button {
+    border-radius: 4px;
 }
