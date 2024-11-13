@@ -20,7 +20,7 @@
                                 },
                                 "search_type": {
                                     "type": "string",
-                                    "description": "The type of field being searched. For example, use \"Title\" to match search term to titles of records or \"Subject\" to match search term to subjects of records. ONLY use the options given.",
+                                    "description": "The type of field being searched. For example, use \"Title\" to match search term to titles of records or \"Subject\" to match search term to subjects of records. ONLY use the options given. DO NOT invent new ones.",
                                     "enum": [
                                         "AllFields",
                                         "Title",
@@ -70,9 +70,9 @@
                                 "Thesis",
                                 "Sound",
                                 "Physical object",
-                                "Other text",
                                 "Letter",
                                 "Diary",
+                                "Research report",
                                 "Musical score",
                                 "Video",
                                 "DVD",
