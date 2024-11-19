@@ -35,8 +35,7 @@
                                         "Series",
                                         "toc",
                                         "publisher",
-                                        "PublicationPlace",
-                                        "Holdings"
+                                        "PublicationPlace"
                                     ]
                                 }
                             },
@@ -65,7 +64,6 @@
                                 "Journal",
                                 "Article",
                                 "Archive/Collection",
-                                "Archive series",
                                 "Image",
                                 "Thesis",
                                 "Sound",

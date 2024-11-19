@@ -37,7 +37,6 @@ format_codes = {
     "Journal": "0/Journal/",
     "Article": "1/Journal/Article/",
     "Archive/Collection": "0/Document/",
-    "Archive series": "1/Document/ArchiveSeries/",
     "Image": "0/Image/",
     "Thesis": "0/Thesis/",
     "Sound": "0/Sound/",
