@@ -26,25 +26,12 @@
         }
     },
     {
-        "content": "Onko samuli paulaharjun arkistossa kirjeitä?",
-        "parameters": {
-            "search_terms": [
-                {
-                    "search_term": "samuli paulaharju",
-                    "search_type": "Author"
-                }
-            ],
-            "formats": ["Letter"],
-            "prompt_lng": "fi"
-        }
-    },
-    {
         "content": "mitä aineistoja samuli paulaharjun arkistossa on?",
         "parameters": {
             "search_terms": [
                 {
                     "search_term": "samuli paulaharju",
-                    "search_type": "Author"
+                    "search_type": "AllFields"
                 }
             ],
             "formats": ["Archive/Collection"],
