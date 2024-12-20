@@ -1,0 +1,535 @@
+{
+    "errors": [
+        {
+            "content": "Mitä Sakari Pälsin ottamia kuvia Finnasta löytyy?",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "sakari pälsi",
+                        "search_type": "Author"
+                    }
+                ],
+                "formats": ["Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin kirjallisuutta tervanpoltosta",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "tervanpoltto",
+                        "search_type": "Subject"
+                    }
+                ],
+                "formats": ["Book"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "mitä aineistoja samuli paulaharjun arkistossa on?",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "samuli paulaharju",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "formats": ["Archive/Collection"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Mitä muistitietokeruita Finnasta löytyy",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "muistitietokeruu",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Löytyykö riku roope ja ringo kirjoja englanniksi",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "riku roope ja ringo",
+                        "search_type": "Series"
+                    }
+                ],
+                "formats": ["Book"],
+                "languages": ["eng"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin piirustuksia",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "",
+                        "search_type": ""
+                    }
+                ],
+                "formats": ["Drawing"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Haluan löytää sienestämiseen liittyviä kirjoja",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "sienestäminen",
+                        "search_type": "Subject"
+                    }
+                ],
+                "formats": ["Book"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Löytyykö finnasta raportteja hiilinieluihin liityen?",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "hiilinielu",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "formats": ["Research report"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin kirjaa joka kertoo kalliosta. Sen nimi taisi liittyä pitkäsiltaan.",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "kallio",
+                        "search_type": "Subject"
+                    },
+                    {
+                        "search_term": "pitkäsilta",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "formats": ["Book"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin kuvia lontoosta",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "lontoo",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "formats": ["Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin liivin kielistä aineistoa",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "",
+                        "search_type": ""
+                    }
+                ],
+                "languages": ["liv"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Haluaisin lainata bell hooksin kirjoja, jotka löytyvät rikhardinkadun kirjastosta",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "bell hooks",
+                        "search_type": "Author"
+                    }
+                ],
+                "formats": ["Book"],
+                "organizations": ["rikhardinkadun kirjasto"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Onko Finnassa Oiva Toikan lintuja",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "oiva toikka",
+                        "search_type": "Author"
+                    },
+                    {
+                        "search_term": "lintu",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin metsästykseen liittyvää esineistöä kansallismuseon kokoelmista",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "metsästys",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "formats": ["Physical object", "Image"],
+                "organizations": ["kansallismuseo"],
+                "prompt_lng": "fi"
+            }
+        }
+    ],
+    "art_and_design": [
+        {
+            "content": "Etsin laseja, joiden suunnittelija on Nanny Still",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "nanny still",
+                        "search_type": "Author"
+                    },
+                    {
+                        "search_term": "lasi",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "search_bool": "AND",
+                "formats": ["Physical object", "Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin riihimäen lasin valmistamia laseja ",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "riihimäen lasi",
+                        "search_type": "Author"
+                    },
+                    {
+                        "search_term": "lasi",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "search_bool": "AND",
+                "formats": ["Physical object", "Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Onko Finnassa kuvia Riihimäen Lasin valmistamista tuhkakupeista?",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "riihimäen lasi",
+                        "search_type": "Author"
+                    },
+                    {
+                        "search_term": "tuhkakuppi",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "search_bool": "AND",
+                "formats": ["Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Millaisia lintuja Oiva Toikka on suunnitellut",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "oiva toikka",
+                        "search_type": "Author"
+                    },
+                    {
+                        "search_term": "lintu",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "search_bool": "AND",
+                "formats": ["Physical object", "Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Mitä astioita Kaj Franck on suunnitellut Arabialle?",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "kaj franck",
+                        "search_type": "Author"
+                    },
+                    {
+                        "search_term": "arabia",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "search_bool": "AND",
+                "formats": ["Physical object", "Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin artekin pöytiä",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "artek",
+                        "search_type": "Author"
+                    },
+                    {
+                        "search_term": "pöytä",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "search_bool": "AND",
+                "formats": ["Physical object", "Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsi Tapiovaaran suunnittelemia tuoleja",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "tapiovaara",
+                        "search_type": "Author"
+                    },
+                    {
+                        "search_term": "tuoli",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "search_bool": "AND",
+                "formats": ["Physical object", "Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin helmiriitta honkasen julisteita",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "helmiriitta honkanen",
+                        "search_type": "Author"
+                    },
+                    {
+                        "search_term": "juliste",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "search_bool": "AND",
+                "formats": ["Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin ruisrock julisteita",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "ruisrock",
+                        "search_type": "AllFields"
+                    },
+                    {
+                        "search_term": "juliste",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsi kuvia taloinpoikaispöydistä",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "taloinpoikaispöytä",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "formats": ["Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin kuvia klaffipöydistä",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "klaffipöytä",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "formats": ["Image"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin rukinlapoja pohjanmaan seudulta",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "rukinlapa",
+                        "search_type": "AllFields"
+                    },
+                    {
+                        "search_term": "pohjanmaa",
+                        "search_type": "geographic"
+                    }
+                ],
+                "prompt_lng": "fi"
+            }
+        }
+    ],
+    "journalist": [
+        {
+            "content": "Etsin Jussi Aron henkilöarkistoa",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "jussi aro",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "formats": ["Archive/Collection"],
+                "prompt_lng": "fi"
+            }
+        },
+            {
+                "content": "Etsin Johannes Aspelinin arkistoa",
+                "parameters": {
+                    "search_terms": [
+                        {
+                            "search_term": "johannes aspelin",
+                            "search_type": "AllFields"
+                        }
+                    ],
+                    "formats": ["Archive/Collection"],
+                    "prompt_lng": "fi"
+                }
+        },
+        {
+            "content": "Etsin työväen muistitietotoimikunnan keruita",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "työväen muistitietotoimikunta AND keruu",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin raportteja turpeentuotantoon liittyen",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "turpeentuotanto",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "formats": ["Research report"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Onko Finnassa kuvia suomalaisesta baletista 1940-luvulta?",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "suomalainen baletti",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "formats": ["Image"],
+                "year_from": 1940,
+                "year_to": 1949,
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Onko finnassa cc0 kuvia esko ahosta?",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "Esko Aho",
+                        "search_type": "AllFields"
+                    }
+                ],
+                "formats": ["Image"],
+                "usage_rights": ["No restrictions (CC0 or Public Domain)"],
+                "prompt_lng": "fi"
+            }
+        }
+    ],
+    "student": [
+        {
+            "content": "Sarah Pinkin uusimmat kirjat",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "sarah pink",
+                        "search_type": "Author"
+                    }
+                ],
+                "formats": ["Book"],
+                "sort_method": "main_date_str desc",
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Kuka on kirjoittanut affektiteoriasta?",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "affektiteoria",
+                        "search_type": "Subject"
+                    }
+                ],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Mistä kirjastosta löydän teoksen A History of Political Thought from Antiquity to Present",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "a history of political thought from antiquity to present",
+                        "search_type": "Title"
+                    }
+                ],
+                "fields": ["institutions"],
+                "prompt_lng": "fi"
+            }
+        },
+        {
+            "content": "Etsin Gallen-Kallelan kirjeitä",
+            "parameters": {
+                "search_terms": [
+                    {
+                        "search_term": "gallen-kallela",
+                        "search_type": "Author"
+                    }
+                ],
+                "formats": ["Letter"],
+                "prompt_lng": "fi"
+            }
+        }
+    ]
+}
