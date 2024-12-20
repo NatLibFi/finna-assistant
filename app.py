@@ -1,10 +1,11 @@
 import os
-from openai import AzureOpenAI
-import gradio as gr
 import json
-import requests
-import pandas as pd
+
 import numpy as np
+import pandas as pd
+import requests
+import gradio as gr
+from openai import AzureOpenAI
 
 client = AzureOpenAI(
   azure_endpoint="https://finna-ai-test.openai.azure.com/",
@@ -122,13 +123,13 @@ def search_library_records(**kwargs):
     organizations = kwargs["organizations"]
     if type(organizations) != list:
         organizations = [organizations]
-    building_filter = ['~building:"' + get_most_similar_embedding("organizations_embeddings.pkl", o) + '"' for o in organizations] if organizations[0] else []
+    building_filter = ['~building:"' + get_most_similar_embedding("embeddings/organizations_embeddings.pkl", o) + '"' for o in organizations] if organizations[0] else []
 
     # Set hierarchy filter
     journals = kwargs["journals"]
     if type(journals) != list:
         journals = [journals]
-    hierarchy_filter = ['~hierarchy_parent_title:"' + get_most_similar_embedding("journals_embeddings.pkl", j) + '"' for j in journals] if journals[0] else []
+    hierarchy_filter = ['~hierarchy_parent_title:"' + get_most_similar_embedding("embeddings/journals_embeddings.pkl", j) + '"' for j in journals] if journals[0] else []
     
     # Set usage rights filter
     usage_rights = kwargs["usage_rights"]
@@ -212,7 +213,7 @@ def search_library_records(**kwargs):
     
     return json.dumps(results, indent=2)
 
-tools = json.loads(read_file("tools.json"))
+tools = json.loads(read_file("prompts/tools.json"))
 
 available_functions = {
     "search_library_records": search_library_records
@@ -316,13 +317,18 @@ def initial_chat_history(file):
         "content": read_file(file)
     }
 
-build_date = read_file("date.txt")
+def get_build_date():
+    try:
+        return read_file("date.txt")
+    except Exception as e:
+        print(f"An error occurred while reading file: {e}")
+        return ""
 
-with gr.Blocks(css_paths="custom.css", theme=gr.themes.Default(spacing_size="sm", text_size="sm", radius_size="md")) as demo:
+with gr.Blocks(css_paths="static/custom.css", theme=gr.themes.Default(spacing_size="sm", text_size="sm", radius_size="md")) as demo:
     # Session state
-    chat_history_var = gr.State([initial_chat_history("system_prompt.md")])
+    chat_history_var = gr.State([initial_chat_history("prompts/system_prompt.md")])
     finna_url_var = gr.State("")
-    selected_prompt_var = gr.State("system_prompt.md")
+    selected_prompt_var = gr.State("prompts/system_prompt.md")
 
     # UI components
     with gr.Row():
@@ -333,7 +339,7 @@ with gr.Blocks(css_paths="custom.css", theme=gr.themes.Default(spacing_size="sm"
                 clear = gr.ClearButton(value="Start a new chat", components=[msg, chatbot], elem_classes="gr-button", scale=1)
                 btn = gr.Button(value="Submit", variant="primary", elem_classes="gr-button", scale=1)
                 dropdown = gr.Dropdown(["English system prompt", "Finnish system prompt", "English with Finnish examples"], value="English system prompt", type="index", interactive=True, show_label=False, container=False, scale=2)
-            build_message = gr.HTML(f"<div id=\"build-date\">App last built: {build_date}</div>")
+            build_message = gr.HTML(f"<div id=\"build-date\">App last built: {get_build_date()}</div>")
         with gr.Column(scale=2):
             iframe = gr.HTML("<iframe src=\"\"></iframe>")
 
@@ -377,7 +383,7 @@ with gr.Blocks(css_paths="custom.css", theme=gr.themes.Default(spacing_size="sm"
     
     # Function to be called on clear
     def clear_chat(system_prompt):
-        files = ["system_prompt.md", "system_prompt_fi.md", "system_prompt_fi_en.md"]
+        files = ["prompts/system_prompt.md", "prompts/system_prompt_fi.md", "prompts/system_prompt_fi_en.md"]
         return {
             msg: gr.update(value="", info="Tokens used: 0/128,000"),
             iframe: "<iframe src=\"\"></iframe>",

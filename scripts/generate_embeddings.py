@@ -1,4 +1,5 @@
 import os
+
 from openai import AzureOpenAI
 import pandas as pd
 
@@ -12,15 +13,16 @@ def get_embedding(text):
     return client.embeddings.create(input=text, model="text-embedding-ada-002").data[0].embedding
 
 # Read organizations from file
-df_o = pd.read_csv("organizations.csv", delimiter=";")
+df_o = pd.read_csv("data/organizations.csv", delimiter=";")
 # Get embeddings for organization names
 df_o["embedding"] = df_o["translated"].apply(lambda x: get_embedding(x))
 
 # Read journals from file
-df_j = pd.read_csv("journals.csv")
+df_j = pd.read_csv("data/journals.csv")
 # Get embeddings for journal names
 df_j["embedding"] = df_j["value"].apply(lambda x: get_embedding(x))
 
 # Save embeddings to .pkl files
-df_o.to_pickle("organizations_embeddings.pkl")
-df_j.to_pickle("journals_embeddings.pkl")
+os.makedirs("embeddings", exist_ok=True)
+df_o.to_pickle("embeddings/organizations_embeddings.pkl")
+df_j.to_pickle("embeddings/journals_embeddings.pkl")

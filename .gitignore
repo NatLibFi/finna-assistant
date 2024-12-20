@@ -1,6 +1,8 @@
-# Embedding file
-organizations_embeddings.pkl
-journals_embeddings.pkl
+# Embedding files
+embeddings/
+
+# Build date
+date.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,0 +1,4 @@
+gradio==5.4.0
+numpy
+openai
+pandas

@@ -1,12 +1,18 @@
 FROM python:3.10-slim-bookworm
 
 WORKDIR /usr/src/app
-RUN pip install --no-cache-dir gradio openai pandas numpy
-COPY app.py generate_embeddings.py system_prompt.md system_prompt_fi.md system_prompt_fi_en.md organizations.csv journals.csv tools.json custom.css .
+COPY app.py requirements.txt .
+COPY data/ data/
+COPY prompts/ prompts/
+COPY scripts/ scripts/
+COPY static/ static/
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 ARG AZURE_OPENAI_KEY
-ENV AZURE_OPENAI_KEY=$AZURE_OPENAI_KEY
-RUN python generate_embeddings.py
+ENV AZURE_OPENAI_KEY=${AZURE_OPENAI_KEY}
+
+RUN python scripts/generate_embeddings.py
 
 EXPOSE 7860
 ENV GRADIO_SERVER_NAME="0.0.0.0"
