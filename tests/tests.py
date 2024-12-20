@@ -93,6 +93,4 @@ class TestChatbotFunctionParameters(unittest.TestCase):
         self._run_test(self.test_prompts.get("student"), "Student test")
 
 if __name__ == "__main__":
-    with open("test_results_fi_en.txt", "w") as f:
-        runner = unittest.TextTestRunner(stream=f, verbosity=2)
-        unittest.main(testRunner=runner, exit=False)
+    unittest.main()
